@@ -1,0 +1,387 @@
+Gtk-Message: 16:17:53.251: Failed to load module "canberra-gtk-module"
+Inconsistency detected by ld.so: ../elf/dl-tls.c: 517: _dl_allocate_tls_init: Assertion `listp != NULL' failed!
+
+matlab 켰을때 이런 에러 뜨면
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/gtk-2.0/modules/libcanberra-gtk-module.so /usr/lib/libcanberra-gtk-module.so
+
+
+
+./sdf 파일의 단위 설명
+https://github.com/PX4/PX4-SITL_gazebo-classic/issues/110
+
+https://discuss.px4.io/t/gazebo-sdf-file-motor-parameters-definitions/34747
+
+
+
+sudo update-alternatives --config python
+
+sudo update-alternatives --config gcc
+
+
+----------------------------------------------------------------
+In file included from ../../src/lib/version/version.c:36: 
+~/PX4_testbed  $ bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
+
+
+
+
+
+
+------------------------------------------------------------------------------------
+[27/849] Building C object src/lib/version/CMakeFiles/version.dir/version.c.o
+FAILED: src/lib/version/CMakeFiles/version.dir/version.c.o
+
+In file included from ../../src/lib/version/version.c:36:
+src/lib/version/build_git_version.h:20:28: error: missing terminating " character [-Werror]
+   20 | #define NUTTX_GIT_TAG_STR  "error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4.0
+      |                            ^
+compilation terminated due to -Wfatal-errors.
+cc1: all warnings being treated as errors
+[59/849] Generating parameters.xml
+ninja: build stopped: subcommand failed.
+make: *** [Makefile:230: px4_sitl_default] Error 1
+
+
+
+
+$ git tag
+$ git fetch
+
+
+
+
+if occur
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: refs/remotes/origin/pr-h7-socketcan does not point to a valid object!
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: refs/remotes/origin/px4_firmware_nuttx-10.1.0+-pr-ramtron does not point to a valid object!
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: refs/tags/nuttx-10.2.0 does not point to a valid object!
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+error: wrong index v2 file size in /home/hmcl/PX4_testbed/PX4-Autopilot/.git/modules/platforms/nuttx/NuttX/nuttx/objects/pack/pack-5b50349f1629c8a47b050cba643ccb82fd4b78f7.idx
+
+
+$ make distclean
+$ make clean
+$ git fetch --all --tags
+$ git fetch
+
+
+
+
+
+
+
+
+----Inconsistency detected by ld.so: ../elf/dl-tls.c: 517: _dl_allocate_tls_init: Assertion `listp != NULL' failed! --------
+
+이 사이트가 효과적일것 같다. 해보지는 않음
+https://partrobot.ai/blog/how-to-fix-matlab-failure-loading-desktop-class-error-in-linux/
+
+
+
+-----------------------------------------------------------------
+If Gazebo was installed to /usr/local/ and running gazebo throws an error similar to:
+
+gazebo: error while loading shared libraries: libgazebo_common.so.1: cannot open shared object file: No such file or directory
+
+, then /usr/local/lib is not in load path (default behavior for Ubuntu). Run the following commands and then try running gazebo again:
+
+$ echo '/usr/local/lib' | sudo tee /etc/ld.so.conf.d/gazebo.conf
+$ sudo ldconfig
+
+
+
+
+
+----------------------------------------------------------------------------
+Many build problems are caused by either mismatching submodules or an incompletely cleaned-up build environment. Updating the submodules and doing a distclean can fix these kinds of errors:
+
+
+$ git submodule update --recursive
+$ make distclean
+
+
+$ git checkout -b NEW-BRANCH-NAME
+
+------------------------------------------------------------------
+Unable to checkout 'bf660cba2af81f055002b3817c87b1f63a78fd09' in submodule path 'platforms/nuttx/NuttX/nuttx'
+
+$ bash Tools/check_submodules.sh platforms/nuttx/NuttX/nuttx
+$ git add platforms/nuttx/NuttX/nuttx
+$ git submodule update --init --recursive
+
+
+-----------------------------------------------------------------
+
+FAILED: external/Stamp/sitl_gazebo-classic/sitl_gazebo-classic-
+
+
+
+https://discuss.px4.io/t/make-px4-sitl-gazebo-failed-external-stamp-sitl-gazebo-sitl-gazebo-build/24171
+
+swap memory 확인 및 늘리는범 :  https://shanepark.tistory.com/378
+vi 사용법 :  https://ss-o.tistory.com/131#google_vignette
+https://mrkzet.tistory.com/23
+
+
+
+------------------------------
+make px4_sitl gazebo_iris
+make px4_sitl gazebo 
+가 안될경
+
+make px4_sitl gazebo-classic_iris 
+쓰기 autopilot이 더이상 지원 안해서 그런가?
+
+
+
+
+
+주제 이름          INST=다중 인스턴스 인덱스  MSG = 게시 빈도(Hz)   LOST = 초당 손실된 메시지 수(모든 구독자가 결합된 경우)  
+TOPIC NAME                        INST #SUB #MSG #LOST #QSIZE
+actuator_armed                       0    6    4     0 1
+actuator_controls_0                  0    7  242  1044 1
+battery_status                       0    6  500  2694 1
+commander_state                      0    1   98    89 1
+control_state                        0    4  242   433 1
+ekf2_innovations                     0    1  242   223 1
+ekf2_timestamps                      0    1  242    23 1
+estimator_status                     0    3  242   488 1
+mc_att_ctrl_status                   0    0  242     0 1
+sensor_accel                         0    1  242     0 1
+sensor_accel                         1    1  249    43 1
+sensor_baro                          0    1   42     0 1
+sensor_combined                      0    6  242   636 1
+                                       sub = 구독자 수      QSIZE = 대기열 크기
+
+
+
+make submodulesupdate
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+ninja: build stopped: subcommand failed
+
+
+ $ git fetch --all --tags
+ $  make clean
+ $  make distclean
+ $  git checkout
+ $  git pull
+ $  make px4_sitl gazebo
+
+------------------------------------------------------------------------------------------
+
+model: iris
+world: none
+src_path: /home/hmcl/PX4_testbed/PX4-Autopilot
+build_path: /home/hmcl/PX4_testbed/PX4-Autopilot/build/px4_sitl_default
+GAZEBO_PLUGIN_PATH :/home/hmcl/PX4_testbed/PX4-Autopilot/build/px4_sitl_default/build_gazebo-classic:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/home/hmcl/PX4_testbed/PX4-Autopilot/build/px4_sitl_default/build_gazebo-classic
+GAZEBO_MODEL_PATH :/home/hmcl/PX4_testbed/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models:/home/hmcl/PX4_testbed/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models:/usr/share/gazebo-11/models:/home/hmcl/PX4_testbed/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models
+LD_LIBRARY_PATH /home/hmcl/catkin_ws/devel/lib:/opt/ros/noetic/lib:/home/hmcl/PX4_testbed/PX4-Autopilot/build/px4_sitl_default/build_gazebo-classic:/home/hmcl/PX4_testbed/PX4-Autopilot/build/px4_sitl_default/build_gazebo-classic
+
+
+
+-----------------------------------------------------------------------------------
+
+
+
+ref_motor_rot_vel= 0 하면 모터가 전부 멈춘다.
+
+
+MotorFailureNumSubTopic  msg는  /gazebo/motor_failure_num 라는 내용을 담고 있다
+motor_failure_sub_topic_ 이 토픽에는 MotorFailureNumSubTopic 라는 msg를 sub 할거다.
+
+
+
+CommandSubTopic msg는 /gazebo/command/motor_speed 라는 내용을 담고있다
+command_sub_topic_ 이 토픽은 CommandSubTopic 라는 msg를 Sub할거다
+
+
+
+ROSMotorNumSubTopic msg는 /motor_failure/motor_number 라는 내용을 담고있다
+ROS_motor_num_sub_topic_ 이 토픽은 ROSMotorNumSubTopic 라는 msg를 Sub할거다
+ROS_motor_num_sub_topic_은 아래에서 사용된다.
+  ros::SubscribeOptions so = ros::SubscribeOptions::create<std_msgs::Int32>(ROS_motor_num_sub_topic_, 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack, this, _1), ros::VoidPtr(), &this->rosQueue);
+
+so 라는 node를 만들고 <std_msgs::Int32>는 구독할 메시지의 타입을 sub 하고
+ROS_motor_num_sub_topic_ 이러한 토픽을 sub하고 ROS_motor_num_sub_topic_은 if (_sdf->HasElement("ROSMotorNumSubTopic")) 에서 구해진다.
+그리고 ROS_motor_num_sub_topic_이 sub 되면 motorFailNumCallBack 라는 콜백 함수 실행되고
+motor_Failure_Number_ 라는 변수에 std_msgs::msg::Int32::SharedPtr msg 라는 msg의 포인터로 가서 data 값을 가져온다
+근데 그 data값은 std_msgs::msg::Int32 이다. 그래서 motor_Failure_Number_ 는 std::string에서 std_msgs::msg::Int32 가 된다.
+
+
+
+
+
+MotorFailureNumPubTopic msg는 /gazebo/motor_failure_num 라는 내용을 담고있다
+motor_failure_num_pub_topic_ 이 토픽은 MotorFailureNumPubTopic 라는 msg를 Pub할거다
+
+
+
+motor_Failure_Number_      //현재 실패한 모터의 번호,, 최종적으로 이놈이 모터 고장날 번호를 가지고 있는듯
+
+
+
+
+
+
+
+motor_failure_sub_ 라는 서브스크라이버 노드가 있다. 이 노드는  motor_failure_sub_topic_ 라는 토픽을 받으면
+MotorFailureCallback 콜백 함수를 실행한다. 하면 모터 고장 번호를 담고 있는 메시지인 fail_msg의 포인터, 즉 주소를 받습니다.
+fail_msg는 고장난 모터의 번호를 담고 있는 메시지 객체다.
+콜백함수가 실행되면  fail_msg 안에 data 라는 값을 motor_Failure_Number_ 라는 변수에 저장한다.
+즉, motor_Failure_Number_  에 모터의 고장번호가 담겨있다.
+
+
+
+
+motor_Failure_Number_ 안에 담긴 모터 고장 번호는 
+void GazeboMotorFailure::OnUpdate(const common::UpdateInfo &info)  여기로 온다.
+motor_Failure_Number_ 의 값은 motor_failure_msg_ 라는 msg객체에 담기고
+motor_failure_msg_ 라는 msg는 motor_failure_pub_ 라는 퍼블리셔 덕분에 pub 된다. 
+
+
+
+motor_failure_pub_ = node_handle_->Advertise<msgs::Int>(motor_failure_num_pub_topic_, 1);
+//motor_failure_pub_ 라는 퍼블리셔가 생기고 <msgs::Int>는 구독할 메시지의 타입을 가지는 motor_failure_num_pub_topic_ 을 pub 한다.
+//여기서 의문점 : <msgs::Int>는 구독할 메시지의 타입을 pub 한다고 했다. msgs::Int는 정수형 데이터를 담을 수 있는 메시지 타입으로, 여기서는 모터의 고장 번호 등 정수형 데이터를 발행하는 데 사용
+//여기서 의문점 : 그럼 motor_failure_num_pub_topic_ 은 msgs::Int 타입인데  if (_sdf->HasElement("MotorFailureNumPubTopic")) 여기를 보면 std::string 이라는데?
+
+
+
+
+
+
+
+
+
+
+
+motor_number_ = _sdf->GetElement("motorNumber")->Get<int>();
+이 코드에서 sdf 파일에 motorNumber 줄의 모터 번호를 motor_number_에 저장한다.
+
+
+
+
+
+
+
+
+
+  //std::string: 이는 템플릿 파라미터로, 읽어올 파라미터 값의 타입을 지정합니다. 여기서는 문자열 타입의 파라미터 값을 읽어옵니다.
+  //_sdf: 이는 파라미터 값을 읽어올 SDF 요소를 가리킵니다. 이는 함수가 호출될 때 함수에 전달되는 SDF 객체입니다.
+  //"commandSubTopic": 이는 _sdf 요소 내에서 찾고자 하는 파라미터의 이름입니다.
+  //command_sub_topic_: 이는 파라미터 값을 저장할 변수입니다. 파라미터가 발견되면, 해당 값이 이 변수에 저장됩니다.
+  //command_sub_topic_: 또는 이 변수의 현재 값은 파라미터가 발견되지 않았을 때 사용될 기본값으로도 기능합니다.
+  //sdf 파일에서 commandSubTopic의 줄에서 /gazebo/command/motor_speed 내용을  command_sub_topic_에 저장한다.
+  //한줄 요약 command_sub_topic_ 에 /gazebo/command/motor_speed 라는 내용 담김
+getSdfParam<std::string>(_sdf, "commandSubTopic", command_sub_topic_, command_sub_topic_);
+
+
+
+
+
+
+
+  //motor_failure_sub_: 이는 구독자 객체를 저장하기 위한 변수입니다. 이 변수를 통해 생성된 구독자와의 상호작용이 이루어집니다.
+  //node_handle_: Gazebo에서 통신을 관리하기 위한 노드 핸들 객체입니다. Subscribe 메서드를 호출하여 새로운 구독자를 생성합니다.
+  //Subscribe<msgs::Int>: Subscribe 메서드는 특정 타입의 메시지에 대한 구독자를 생성합니다. 여기서 <msgs::Int>는 구독할 메시지의 타입을 지정합니다. 
+  //Subscribe<msgs::Int>: 이 경우 msgs::Int 타입의 메시지를 구독하겠다는 의미입니다. msgs::Int는 정수 값을 담을 수 있는 메시지 타입입니다.
+  //motor_failure_sub_topic_: 구독할 토픽의 이름을 나타내는 문자열 변수입니다. 이 변수에 저장된 이름의 토픽에 대한 메시지가 발행될 때마다 지정된 콜백 함수가 호출됩니다.
+  //this: 콜백 함수가 속한 객체의 포인터입니다. this 키워드는 현재 인스턴스를 가리키며, 여기서는 GazeboMotorModel 객체 자신을 의미합니다. 약간 self그런건가??
+  motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>(motor_failure_sub_topic_, &GazeboMotorModel::MotorFailureCallback, this);
+
+
+
+
+
+
+
+
+
+
+
+
+motor_failure_pub_ 라는 퍼블리셔가 생기고 <msgs::Int>는 구독할 메시지의 타입을 가지는 motor_failure_num_pub_topic_ 을 pub 한다. 여기서 의문점 생겨 <msgs::Int>는 구독할 메시지의 타입을 pub 한다고 했다. msgs::Int는 정수형 데이터를 담을 수 있는 메시지 타입으로, 여기서는 모터의 고장 번호 등 정수형 데이터를 발행하는 데 사용한다. 
+하지만 motor_failure_num_pub_topic_ 은 msgs::Int 타입인데  if (_sdf->HasElement("MotorFailureNumPubTopic")) 여기를 보면 std::string 이라는데?
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+~/PX4-Autopilot/Tools/sitl_gazebo 에 가서 플러그인 생성
+$ catkin build -DBUILD_ROS_INTERFACE=ON
+
+
+
+
+
+커밋(commit) : 파일을 추가하거나 변경 내용을 저장소에 저장하는 작업
+푸시 (push) : 파일을 추가하거나 변경 내용을 원격 저장소에 업로드하는 작업
+
+저장소는 자신의 컴퓨터에있는 "로컬 저장소"고 
+서버 등 네트워크에있는 "원격 저장소"의 2 개소에 있습니다. 
+기본적으로 로컬 저장소에서 작업을 수행하고 그 결과를 원격 저장소에 저장하게 됩니다.
+
+
+브랜치 (Branch)
+소프트웨어 개발은 ​​현재 출시하고있는 버전의 유지 보수를하면서 새로운 기능 추가 및 버그 수정을 할 수 있습니다. 이러한 병렬로 수행되는 여러 버전 관리를 위해 Github에는 브랜치 (branch)라는 기능이 있습니다.
+지점은 역사의 흐름을 분기하여 기록 해 나가는 것입니다. 분기 한 지점은 다른 지점의 영향을받지 않기 때문에 같은 저장소에서 각 개발을 해 나갈 수 있습니다.
+
+
+git init "명령은 Git 저장소를 새로 만드는 명령입니다. 이 명령을 실행하면 현재 디렉토리를 Git 저장소로 변환합니다.
+$ git init
+하면 git 이라는 놈이 내가 하는 일을 다 감시하고 변경사항을 지켜본다
+git init을 해야 git을 사용가능
+
+
+
+$ git add hello.html  다음의 명령으로 인덱스에 추가합니다. 인덱스는 저장소에 커밋 할 준비를하기 위해 변경 내용을 임시로 저장할 위치입니다.
+
+파일의 현재상태를 기록해두려면
+$ git add 파일명
+$ git commit -m '적고 싶은 메모'
+
+
+작업폴더에서 add를 하면 staging area 에 내가 저장할 코드 파일을 담아놓고     ----> 이러한 행동을 "staging 한다" 라고 함
+commit을 하면 staging area에 있는 담아놓은 파일을 repository저장소에 옮긴다 
+
+
+
+$ git status
+하면 내가 어떤 파일을 staging 해놨는지 알수있다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
