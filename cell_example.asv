@@ -1,0 +1,18 @@
+function cell_format = matrix_matrix(motor1_fail,motor2_fail)
+    
+%row = motor1_fail
+%col = motor2_fail
+%motor1_fail = 10;
+%motor2_fail = 5;
+
+asdf = cell(motor1_fail,motor2_fail);
+
+    for x= 1:motor1_fail
+        for y= 1:motor2_fail
+            mat = [x, y];
+            cell_format{x,y} = mat;
+        end
+    end
+
+end
+
