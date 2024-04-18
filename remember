@@ -330,8 +330,8 @@ $ catkin build -DBUILD_ROS_INTERFACE=ON
 
 
 
-커밋(commit) : 파일을 추가하거나 변경 내용을 저장소에 저장하는 작업
-푸시 (push) : 파일을 추가하거나 변경 내용을 원격 저장소에 업로드하는 작업
+커밋(commit) : 파일을 추가하거나 변경 내용을 저장소(내 컴퓨터)에 저장하는 작업
+푸시 (push) : 파일을 추가하거나 변경 내용을 원격 저장소(github)에 업로드하는 작업
 
 저장소는 자신의 컴퓨터에있는 "로컬 저장소"고 
 서버 등 네트워크에있는 "원격 저장소"의 2 개소에 있습니다. 
@@ -365,6 +365,7 @@ commit을 하면 staging area에 있는 담아놓은 파일을 repository저장�
 $ git status
 하면 내가 어떤 파일을 staging 해놨는지 알수있다.
 
+----------------------------------------------------------------
 
 
 
@@ -373,9 +374,49 @@ $ git status
 
 
 
+PX4에서 짐벌(Gimbal)은 카메라나 다른 센서를 원하는 방향으로 정확하게 조준하고 안정화하는 장치를 말합니다.
+
+
+---------------------------------------------------------------
 
 
 
+Mixer files will be replaced by Control Allocation parameters in the next version (after PX4 v1.13).
+
+You can enable control allocation in PX4 v1.13 by setting SYS_CTRL_ALLOC=1. If enabled, the geometry may then be defined using CA_* parameters in the airframe configuration file, as shown in 13200_generic_vtol_tailsitter (opens new window).
+
+
+믹서 파일은 다음 버전(PX4 v1.13 이후)에서 제어 할당 매개 변수로 대체됩니다.
+
+SYS_CTRL_ALLOC=1을 설정하여 PX4 v1.13에서 제어 할당을 활성화할 수 있습니다. 활성화된 경우 13200_generic_vtol_tailsitter(opens 새 창)와 같이 기체 구성 파일의 CA_* 매개 변수를 사용하여 지오메트리를 정의할 수 있습니다.
+
+
+
+New airframe files are only automatically added to the build system after a clean build (run make clean).
+
+$ make clean
+
+
+
+------------------------------------------
+
+pxh>   listener actuator_outputs
+
+
+TOPIC: actuator_outputs
+ actuator_outputs
+    timestamp: 3772580000 (0.000000 seconds ago)
+    noutputs: 16
+    output: [1704.00000, 1701.00000, 1706.00000, 1700.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000, 900.00000]
+
+
+
+
+-------------------------------------------
+error: cannot launch node of type [px4/px4]: cannot locate node of type [px4] in package [px4]. make sure file exists in package path and permission is set to executable (chmod +x)
+
+
+vscode에서 들어가서 왼쪽 맨 밑에 build 누르기
 
 
 
