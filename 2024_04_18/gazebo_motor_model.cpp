@@ -41,6 +41,7 @@ void GazeboMotorModel::Publish() {
   // motor_velocity_pub_ 가 pub하는 토픽에 turning_velocity_msg_ 라는 msg객체의 데이터를 담을수 있다??
 }
 
+//Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)는 필수 구성요소다
 void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   model_ = _model;
 
@@ -50,6 +51,11 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
     namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>();
   else
     gzerr << "[gazebo_motor_model] Please specify a robotNamespace.\n";
+    ////Gazebo의 transport 시스템은 시뮬레이션 내의 다양한 컴포넌트 간에 메시지 기반 통신을 가능하게 하는 매커니즘이다
+  /*
+   이는 Gazebo 내에서의 데이터 교환과 이벤트 처리를 위한 중요한 구조적 요소입니다.
+   따라서 node_handle_은 Gazebo 환경에 특화된 노드로, Gazebo 시뮬레이션 밖에서는 사용되지 않습니다.
+  */
   node_handle_ = transport::NodePtr(new transport::Node());
   node_handle_->Init(namespace_);
 
@@ -171,12 +177,12 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   //Subscribe<msgs::Int>: 이 경우 msgs::Int 타입의 메시지를 구독하겠다는 의미입니다. msgs::Int는 정수 값을 담을 수 있는 메시지 타입입니다.
   //motor_failure_sub_topic_: 구독할 토픽의 이름을 나타내는 문자열 변수입니다. 이 변수에 저장된 이름의 토픽에 대한 메시지가 발행될 때마다 지정된 콜백 함수가 호출됩니다.
   //this: 콜백 함수가 속한 객체의 포인터입니다. this 키워드는 현재 인스턴스를 가리키며, 여기서는 GazeboMotorModel 객체 자신을 의미합니다. 약간 self그런건가??
-  motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num33", &GazeboMotorModel::MotorFailureCallback, this);  //이부분은 수정했다 //내가 수정한거---------
+  motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num", &GazeboMotorModel::MotorFailureCallback, this);  //이부분은 수정했다 //내가 수정한거---------
 
 
   // FIXME: Commented out to prevent warnings about queue limit reached.
   motor_velocity_pub_ = node_handle_->Advertise<std_msgs::msgs::Float>("~/" + model_->GetName() + motor_speed_pub_topic_, 1); //이부분 수정했다
-  wind_sub_ = node_handle_->Subscribe("~/" + wind_sub_topic_, &GazeboMotorModel::WindVelocityCallback, this); //여기에 gazebo_wind_plugin에서 오는 /world_wind가 들어온다.
+  wind_sub_ = node_handle_->Subscribe<physics_msgs::msgs::Wind>("~/world_wind", &GazeboMotorModel::WindVelocityCallback, this); //여기에 gazebo_wind_plugin에서 오는 /world_wind가 들어온다.
 
   // Create the first order filter.
   rotor_velocity_filter_.reset(new FirstOrderFilter<double>(time_constant_up_, time_constant_down_, ref_motor_rot_vel_));
@@ -326,11 +332,19 @@ void GazeboMotorModel::UpdateMotorFail() {
 //typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
 //여기 msg에는 gazebo_wind_plugin에서 pub되는 wind_msg이다.
 void GazeboMotorModel::WindVelocityCallback(WindPtr& msg) {
+
   wind_vel_ = ignition::math::Vector3d(msg->velocity().x(),
             msg->velocity().y(),
             msg->velocity().z());
-  //std::cout << "[wind_vel_] :  " << wind_vel_ << std::endl;
+  //std::cout << "[wind_vel_] :  (" << wind_vel_.X() << ", " << wind_vel_.Y() << ", " << wind_vel_.Z() << ")" << std::endl;
+  //이렇게 출력하는 이유는 << 연산자가 ignition::math::Vector3d 타입의 변수를 한번에 출력하는 방법이 정의 되어 있지 않아서이다.
 
+
+  /*
+  wind_vel_ += ignition::math::Vector3d(0.1,0,0);
+  std::cout << "[wind_vel_] :  (" << wind_vel_.X() << ", " << wind_vel_.Y() << ", " << wind_vel_.Z() << ")" << std::endl;
+  */
+  //이거 되는듯?
 }
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboMotorModel);

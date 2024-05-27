@@ -23,13 +23,28 @@
 #ifndef ROTORS_GAZEBO_PLUGINS_GAZEBO_WIND_PLUGIN_H
 #define ROTORS_GAZEBO_PLUGINS_GAZEBO_WIND_PLUGIN_H
 
+#include <stdio.h>
+#include <boost/bind.hpp>
+#include <thread>
 #include <string>
 #include <random>
 #include <gazebo/common/common.hh>
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
+#include <gazebo/transport/transport.hh>
+#include <gazebo/msgs/msgs.hh>
+//#include "gazebo/transport/transport.hh"
+//#include "gazebo/msgs/msgs.hh"
+//#include "common.h"
 
+#include <ros/ros.h>
+#include <ros/callback_queue.h>
+#include <ros/subscribe_options.h>
+#include <geometry_msgs/Vector3.h>
+
+
+#include <common.h>
 #include "Wind.pb.h"
 
 namespace gazebo {
@@ -136,9 +151,26 @@ class GazeboWindPlugin : public WorldPlugin {
 
   transport::NodePtr node_handle_;
   transport::PublisherPtr wind_pub_;
-  //typedef boost::shared_ptr<Publisher> PublisherPtr;
+  transport::SubscriberPtr my_wind_sub;
+  //typedef boost::shared_ptr<Publisher> PublisherPtr; 라고 정의 되어있다.
+  //typedef const boost::shared_ptr<gazebo::msgs::Vector3d const> ConstVector3dPtr;
+  //typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
 
+  void OnWindMsg(const geometry_msgs::Vector3::ConstPtr& msg);
   physics_msgs::msgs::Wind wind_msg;
+  physics_msgs::msgs::Wind my_wind_msg;
+  ignition::math::Vector3d my_wind;
+  gazebo::msgs::Vector3d* my_wind_v;
+
+
+  //내가 추가한거 ----------------------------------------------------------------
+  ros::NodeHandle* rosNode; // ROS1 노드 핸들, 이걸 사용하면 ros에 노드 생성
+  ros::Subscriber rosSub; // ROS1 구독자
+  ros::CallbackQueue rosQueue;
+  std::thread rosQueueThread;
+  void QueueThread();
+  //내가 추가한거 -----------------------------------------------------------------
+
 };
 }
 

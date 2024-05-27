@@ -22,6 +22,7 @@
 #include "gazebo_wind_plugin.h"
 #include "common.h"
 
+
 namespace gazebo {
 
 GazeboWindPlugin::~GazeboWindPlugin() {
@@ -43,6 +44,13 @@ void GazeboWindPlugin::Load(physics::WorldPtr world, sdf::ElementPtr sdf) {
     gzerr << "[gazebo_wind_plugin] Please specify a robotNamespace.\n";
   }
 
+  // Create a new transport node
+  //transport::NodePtr node_handle(new transport::Node()); 이렇게도 가능하다.
+  //Gazebo의 transport 시스템은 시뮬레이션 내의 다양한 컴포넌트 간에 메시지 기반 통신을 가능하게 하는 매커니즘이다
+  /*
+   이는 Gazebo 내에서의 데이터 교환과 이벤트 처리를 위한 중요한 구조적 요소입니다.
+   따라서 node_handle_은 Gazebo 환경에 특화된 노드로, Gazebo 시뮬레이션 밖에서는 사용되지 않습니다.
+  */
   node_handle_ = transport::NodePtr(new transport::Node());
   node_handle_->Init(namespace_);
 
@@ -98,9 +106,24 @@ void GazeboWindPlugin::Load(physics::WorldPtr world, sdf::ElementPtr sdf) {
   // simulation iteration.
   update_connection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboWindPlugin::OnUpdate, this, _1));
   //transport::NodePtr node_handle_; //Gazebo 및 ROS 통신을 위한 노드 핸들
-  wind_pub_ = node_handle_->Advertise<physics_msgs::msgs::Wind>("~/" + wind_pub_topic_, 10);
+  //wind_pub_ = node_handle_->Advertise<physics_msgs::msgs::Wind>("~/" + wind_pub_topic_, 10);
+  wind_pub_ = node_handle_->Advertise<physics_msgs::msgs::Wind>("~/world_wind", 10);
   //wind_pub_topic_ 이놈이 world_wind 토픽을 보내고 있다.
 
+    if (!ros::isInitialized())  {
+    int argc = 0;
+    char **argv = NULL;
+    ros::init(argc, argv, "ros_wind_sub", ros::init_options::NoSigintHandler);
+  }
+  //Create our ROS node. This acts in a similar manner to the Gazebo node
+  this->rosNode = new ros::NodeHandle("ros_wind_sub");
+  ros::SubscribeOptions so = ros::SubscribeOptions::create<geometry_msgs::Vector3>("/my_change_wind",
+  10, boost::bind(&GazeboWindPlugin::OnWindMsg, this, _1),
+  ros::VoidPtr(), &this->rosQueue);
+  this->rosSub = this->rosNode->subscribe(so);
+  //this->my_wind_sub = this->rosNode->subscribe<geometry_msgs::Vector3>("/my_change_wind", 10, &GazeboWindPlugin::OnWindMsg, this);
+  //이런식으로 rosnode는  this를 붙여야한다.
+  this->rosQueueThread = std::thread(std::bind(&GazeboWindPlugin::QueueThread, this));
 #if GAZEBO_MAJOR_VERSION >= 9
   last_time_ = world_->SimTime();
 #else
@@ -160,14 +183,28 @@ void GazeboWindPlugin::OnUpdate(const common::UpdateInfo& _info) {
 
   wind += ramp_factor * ramped_wind_vector;
   //wind = wind + (ramp_factor * ramped_wind_vector)
-
+  //여기서 wind는  ignition::math::Vector3d wind 타입이다.
   gazebo::msgs::Vector3d* wind_v = new gazebo::msgs::Vector3d();
-  //new 란? gazebo::msgs::Vector3d()의 주소를 할당한다
-  // 즉, gazebo::msgs::Vector3d()의 주소를 wind_v에 넣는다
+  //new 란? int* ptr = new int; // 정수를 저장할 수 있는 메모리를 할당하고, 그 주소를 ptr에 저장합니다.
+  //*ptr = 5; // 할당된 메모리에 5를 저장합니다.
   //이 코드는 특히 Gazebo의 메시지 전송 시스템에서 사용될 벡터 데이터를 생성하고 초기화할 때 사용됩니다.
+
+
   wind_v->set_x(wind.X() + wind_gust.X());
   wind_v->set_y(wind.Y() + wind_gust.Y());
   wind_v->set_z(wind.Z() + wind_gust.Z());
+  //std::cout << "[wind_v befor before change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
+
+  //std::cout << "[my_wind_v in Load] :  (" << my_wind_v->x() << ", " << my_wind_v->y() << ", " << my_wind_v->z() << ")" << std::endl;
+
+  if (my_wind_v->x() != 0 || my_wind_v->y() != 0 || my_wind_v->z() != 0) {
+    wind_v->set_x(my_wind_v->x());
+    wind_v->set_y(my_wind_v->y());
+    wind_v->set_z(my_wind_v->z());
+    std::cout << "[wind_v after after change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
+  }
+
+  // std::cout << "[wind_v in Onupdate] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
 
   wind_msg.set_frame_id(frame_id_);
   wind_msg.set_time_usec(now.Double() * 1e6);
@@ -196,12 +233,40 @@ void GazeboWindPlugin::OnUpdate(const common::UpdateInfo& _info) {
   //velocity_ 변수에 velocity의 포인터를 할당 즉, velocity_에 wind_v 의 포인터가 할당된다.
   //physics_msgs::msgs::Wind 타입인  wind_msg 이다.
 
+  // my_wind_msg.set_frame_id(frame_id_); // frame_id_ 설정 필요
+  // my_wind_msg.set_time_usec(now.Double() * 1e6); // now 업데이트 필요
+  // my_wind_msg.set_allocated_velocity(my_wind_v);
+  // wind_pub_->Publish(my_wind_msg);
   wind_pub_->Publish(wind_msg);
   //gazebo::msgs::Vector3d 타입인 wind_v를 wind_pub이 pub 한다.
   //gazebo_wind_plugin.h 파일의 physics_msgs::msgs::Wind wind_msg 를 보낸다.
   //보낸 wind_msg 는 void GazeboMotorModel::WindVelocityCallback(WindPtr& msg) 에서 WindVelocityCallback 이 콜백 함수가 받는다.
 
-}
 
-GZ_REGISTER_WORLD_PLUGIN(GazeboWindPlugin);
+}
+  void GazeboWindPlugin::OnWindMsg(const geometry_msgs::Vector3::ConstPtr& msg){
+        ignition::math::Vector3d my_wind = ignition::math::Vector3d(msg->x, msg->y, msg->z);
+
+        my_wind_v->set_x(my_wind.X());
+        my_wind_v->set_y(my_wind.Y());
+        my_wind_v->set_z(my_wind.Z());
+
+        //std::cout << "[my_wind_v in OnWindMsg] :  (" << my_wind_v->x() << ", " << my_wind_v->y() << ", " << my_wind_v->z() << ")" << std::endl;
+
+        // wind_pub_->Publish(my_wind_msg); // my_wind_pub_ 설정 및 초기화 필요
+    }
+  void GazeboWindPlugin::QueueThread() {
+    static const double timeout = 0.01;
+
+    while (this->rosNode->ok()) {
+      this->rosQueue.callAvailable(ros::WallDuration(timeout));
+    }
+  }
+
+GZ_REGISTER_WORLD_PLUGIN(GazeboWindPlugin);  //월드 일경우 GZ_REGISTER_WORLD_PLUGIN 마무리
+//GZ_REGISTER_MODEL_PLUGIN 모델이면 이걸로 마무리
+//GZ_REGISTER_SENSOR_PLUGIN
+//GZ_REGISTER_GUI_PLUGIN
+//GZ_REGISTER_SYSTEM_PLUGIN
+//GZ_REGISTER_VISUAL_PLUGIN
 }

@@ -47,7 +47,7 @@ static const std::string kDefaultROSMotorNumSubTopic = "/motor_failure/motor_num
 //ROS 에서 (/motor_failure/motor_number)를 sub하고,
 
 //여기는 gazebo_motor_model.h랑 다르게 kDefaultMotorFailureNumSubTopic가 아니라 PubTopic 다
-static const std::string kDefaultMotorFailureNumPubTopic = "/gazebo/motor_failure_num55";
+static const std::string kDefaultMotorFailureNumPubTopic = "/gazebo/motor_failure_num";
 // Gazebo 에서 (/gazebo/motor_failure_num)를 pub합니다.
 
 //GazeboMotorFailure 클래스: ModelPlugin을 상속받아 정의되며, Gazebo 모델 플러그인으로 동작합니다.
@@ -56,12 +56,9 @@ class GazeboMotorFailure : public ModelPlugin {   // 그다음 GazeboMotorFailur
   GazeboMotorFailure();
 
   // void motorFailNumCallBack(const std_msgs::msg::Int32::SharedPtr msg);
-  void motorFailNumCallBack(const std_msgs::Int32::ConstPtr msg);
+  void motorFailNumCallBack(const std_msgs::Int32::ConstPtr& msg);
   //motorFailNumCallBack 함수는 ROS 토픽에서 모터 고장 번호를 받을 때 호출되는 콜백 함수입니다.
 
-  //내가 추가한거 -----------------------------------------------------------------
-
-  //내가 추가한거 -----------------------------------------------------------------
 
   virtual ~GazeboMotorFailure();
 
@@ -76,27 +73,27 @@ class GazeboMotorFailure : public ModelPlugin {   // 그다음 GazeboMotorFailur
 //OnUpdate 함수는 시뮬레이션 동안 주기적으로 호출되어, 모터 고장 번호를 Gazebo 토픽으로 발행합니다.
  private:
 
+  //내가 추가한거 -----------------------------------------------------------------
+  void QueueThread();
+  //내가 추가한거 -----------------------------------------------------------------
+
   event::ConnectionPtr updateConnection_;
 
   std::string ROS_motor_num_sub_topic_; // 구독할 토픽의 이름
   std::string motor_failure_num_pub_topic_;
   std::string namespace_;
 
-  transport::NodePtr node_handle_;
+  transport::NodePtr node_handle_;   //이걸 사용하면 gazebo에 노드 생성
   transport::PublisherPtr motor_failure_pub_; /*!< Publish the motor_Failure_num to gazebo topic motor_failure_num_pub_topic_ */
 //ROS와 Gazebo 통신을 위한 변수들(ROS_motor_num_sub_topic_, motor_failure_num_pub_topic_, namespace_, node_handle_, motor_failure_pub_)
   boost::thread callback_queue_thread_;
-
-  //내가 추가한거 -----------------------------------------------------------------
-  void QueueThread();
-  //내가 추가한거 -----------------------------------------------------------------
 
   msgs::Int motor_failure_msg_;
   int32_t motor_Failure_Number_;
 //motor_Failure_Number_는 현재 모터 고장 번호를 저장합니다.
   //내가 추가한거 -----------------------------------------------------------------
 
-  ros::NodeHandle* rosNode; // ROS1 노드 핸들
+  ros::NodeHandle* rosNode; // ROS1 노드 핸들, 이걸 사용하면 ros에 노드 생성
   ros::Subscriber rosSub; // ROS1 구독자
   ros::CallbackQueue rosQueue;
   std::thread rosQueueThread;

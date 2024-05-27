@@ -37,10 +37,10 @@ include(GNUInstallDirs)
 #######################
 
 option(BUILD_GSTREAMER_PLUGIN "enable gstreamer plugin" ON)
-# option(BUILD_ROS2_PLUGINS "Enable building ROS2 dependent plugins" OFF)  # 강민꺼에는 ROS 라고 되어있다
+#option(BUILD_ROS2_PLUGINS "Enable building ROS2 dependent plugins" OFF)  # 강민꺼에는 ROS 라고 되어있다
 option(GENERATE_ROS_MODELS "Generate model sdf for ROS environment" OFF)
 # 내가 추가한거 ----------------------------------------------------------------------------
-option(BUILD_ROS_PLUGINS "enable ROS subscriber for motor failure plugin" OFF)
+option(BUILD_ROS_PLUGINS "enable ROS subscriber for motor failure plugin" ON)
 # 내가 추가한거 ----------------------------------------------------------------------------
 
 
@@ -49,16 +49,11 @@ option(SEND_ODOMETRY_DATA "Send Mavlink ODOMETRY msgs" OFF)
 
 #-------------------------------------------------------------------- 내가 추가한거
 
-# # System dependencies are found with CMake's conventions
-# find_package(catkin REQUIRED COMPONENTS
-#  roscpp
-#  std_msgs
-#  # Add other dependencies as necessary
-# )
-
-# include_directories(
-#  ${catkin_INCLUDE_DIRS}
-# )
+find_package(roscpp REQUIRED)
+# find_package(geometry_msgs REQUIRED)
+# 여기 까지는 무조건 넣어야한다.
+#find_package(sensor_msgs REQUIRED)
+# find_package(std_msgs REQUIRED)
 
 
 #-------------------------------------------------------------------- 내가 추가한거
@@ -130,35 +125,16 @@ if (BUILD_ROS2_PLUGINS)
   find_package(sensor_msgs REQUIRED)
 endif()
 
+
 #내가 추가한거 ---------------------------------------------------------------------------
 # for ROS subscribers and publishers
 
-# find_package(catkin REQUIRED COMPONENTS
-#   gazebo_plugins
-#   gazebo_ros
-#   roscpp
-# )
-
-# find_package(roscpp REQUIRED)
-# find_package(std_msgs REQUIRED)
-# find_package(geometry_msgs REQUIRED)
-# find_package(sensor_msgs REQUIRED)
-
-
-
-# catkin_package()
-# include_directories(
-#   ${roscpp_INCLUDE_DIRS}
-#   ${std_msgs_INCLUDE_DIRS}
-#   ${geometry_msgs_INCLUDE_DIRS}
-#   ${sensor_msgs_INCLUDE_DIRS}
-#   ${catkin_INCLUDE_DIRS}
-# )
-
-# add_library(gazebo_motor_failure_plugin SHARED src/gazebo_motor_failure_plugin.cpp)
-# target_link_libraries(gazebo_motor_failure_plugin ${GAZEBO_libraries} ${roscpp_LIBRARIES} )
-# list(APPEND plugins gazebo_motor_failure_plugin)
-# message(STATUS "adding gazebo_motor_failure_plugin to build")
+# if (BUILD_ROS_PLUGINS)
+#   # find_package(geometry_msgs REQUIRED)
+#   # find_package(roscpp REQUIRED)
+#   # find_package(sensor_msgs REQUIRED)
+#   # find_package(std_msgs REQUIRED)
+# endif()
 
 #내가 추가한거 ---------------------------------------------------------------------------
 
@@ -466,7 +442,6 @@ set(plugins
   gazebo_pose_sniffer_plugin
   gazebo_airship_dynamics_plugin
   gazebo_drop_plugin
-  # gazebo_motor_failure_plugin          #--------------내가 추가한거
   )
 
 foreach(plugin ${plugins})
@@ -499,7 +474,7 @@ target_link_libraries(gazebo_opticalflow_plugin ${OpticalFlow_LIBS})
 # 내가 추가한거 ----------------------------------------------------------------------------------------------------------------
 if (BUILD_ROS_PLUGINS)
   add_library(gazebo_motor_failure_plugin SHARED src/gazebo_motor_failure_plugin.cpp)
-  target_link_libraries(gazebo_motor_failure_plugin ${GAZEBO_libraries} ${roscpp_LIBRARIES})
+  target_link_libraries(gazebo_motor_failure_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES})
   list(APPEND plugins gazebo_motor_failure_plugin)
   message(STATUS "adding gazebo_motor_failure_plugin to build")
 
@@ -511,11 +486,11 @@ if (BUILD_ROS_PLUGINS)
     ${roscpp_INCLUDE_DIRS}
   )
 
-  target_link_libraries(gazebo_motor_failure_plugin
-    ${catkin_LIBRARIES}
-    ${roscpp_LIBRARIES}
-    ${GAZEBO_libraries}
-  )
+  # target_link_libraries(gazebo_motor_failure_plugin
+  #   ${catkin_LIBRARIES}
+  #   ${roscpp_LIBRARIES}
+  #   ${GAZEBO_LIBRARIES}
+  # )
 
 endif()
 

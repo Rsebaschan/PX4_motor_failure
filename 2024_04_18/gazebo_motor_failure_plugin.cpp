@@ -36,10 +36,15 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   if (_sdf->HasElement("robotNamespace"))
     this->namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
 
+  ////Gazebo의 transport 시스템은 시뮬레이션 내의 다양한 컴포넌트 간에 메시지 기반 통신을 가능하게 하는 매커니즘이다
+  /*
+   이는 Gazebo 내에서의 데이터 교환과 이벤트 처리를 위한 중요한 구조적 요소입니다.
+   따라서 node_handle_은 Gazebo 환경에 특화된 노드로, Gazebo 시뮬레이션 밖에서는 사용되지 않습니다.
+  */
   node_handle_ = transport::NodePtr(new transport::Node());
   node_handle_->Init(namespace_); ////Gazebo 및 ROS 통신을 위한 노드 핸들
 
-  motor_failure_pub_ = node_handle_->Advertise<msgs::Int>(motor_failure_num_pub_topic_, 1);
+  motor_failure_pub_ = node_handle_->Advertise<msgs::Int>("/gazebo/motor_failure_num", 1);
   //motor_failure_pub_ 라는 퍼블리셔가 생기고 <msgs::Int>는 구독할 메시지의 타입을 가지는 motor_failure_num_pub_topic_ 을 pub 한다.
   //여기서 의문점 : <msgs::Int>는 구독할 메시지의 타입을 pub 한다고 했다. msgs::Int는 정수형 데이터를 담을 수 있는 메시지 타입으로, 여기서는 모터의 고장 번호 등 정수형 데이터를 발행하는 데 사용
   //여기서 의문점 : 그럼 motor_failure_num_pub_topic_ 은 msgs::Int 타입인데  if (_sdf->HasElement("MotorFailureNumPubTopic")) 여기를 보면 std::string 이라는데?
@@ -76,7 +81,6 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
     int argc = 0;
     char **argv = NULL;
     ros::init(argc, argv, "gazebo_ros_sub", ros::init_options::NoSigintHandler);
-    std::cout << "qkrrlvyqkrrlvyqkrrlvyqkrrlvyqkrrlvyqkrrlvyqkrrlvy" << std::endl;     //내가 수정 ---------------------
 
   }
 
@@ -85,7 +89,7 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   //this->rosNode.reset(new ros::NodeHandle("gazebo_client"));
 
   // Create a named topic, and subscribe to it.
-  ros::SubscribeOptions so = ros::SubscribeOptions::create<std_msgs::Int32>(ROS_motor_num_sub_topic_, 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack, this, _1), ros::VoidPtr(), &this->rosQueue);
+  ros::SubscribeOptions so = ros::SubscribeOptions::create<std_msgs::Int32>("/motor_failure/motor_number", 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack, this, _1), ros::VoidPtr(), &this->rosQueue);
   this->rosSub = this->rosNode->subscribe(so);
   //so는 구독 옵션을 담고 있는 객체
   //rosSub 가 node 이다. rosSub는 so라는 옵션을 사용한다.
@@ -135,7 +139,7 @@ void GazeboMotorFailure::OnUpdate(const common::UpdateInfo &info) {
 }
 
 // void GazeboMotorFailure::motorFailNumCallBack(const std_msgs::msg::Int32::SharedPtr msg) {
-  void GazeboMotorFailure::motorFailNumCallBack(const std_msgs::Int32::ConstPtr msg) {
+  void GazeboMotorFailure::motorFailNumCallBack(const std_msgs::Int32::ConstPtr& msg) {
   this->motor_Failure_Number_ = msg->data;//std_msgs::msg::Int32::SharedPtr msg 에서 data 라는 정보를 motor_Failure_Number_에 넣어라
   std::cout << "[gazebo_motor_failure_plugin]: Subscribe to " << ROS_motor_num_sub_topic_ << std::endl;
 }
