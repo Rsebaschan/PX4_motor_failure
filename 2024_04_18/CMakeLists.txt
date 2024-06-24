@@ -474,17 +474,17 @@ target_link_libraries(gazebo_opticalflow_plugin ${OpticalFlow_LIBS})
 # 내가 추가한거 ----------------------------------------------------------------------------------------------------------------
 if (BUILD_ROS_PLUGINS)
   add_library(gazebo_motor_failure_plugin SHARED src/gazebo_motor_failure_plugin.cpp)
-  target_link_libraries(gazebo_motor_failure_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES})
+  target_link_libraries(gazebo_motor_failure_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES} ${catkin_LIBRARIES})
   list(APPEND plugins gazebo_motor_failure_plugin)
   message(STATUS "adding gazebo_motor_failure_plugin to build")
 
 
-  include_directories(
-    include
-    ${geometry_msgs_INCLUDE_DIRS}
-    ${sensor_msgs_INCLUDE_DIRS}
-    ${roscpp_INCLUDE_DIRS}
-  )
+  # include_directories(
+  #   include
+  #   ${geometry_msgs_INCLUDE_DIRS}
+  #   ${sensor_msgs_INCLUDE_DIRS}
+  #   ${roscpp_INCLUDE_DIRS}
+  # )
 
   # target_link_libraries(gazebo_motor_failure_plugin
   #   ${catkin_LIBRARIES}
