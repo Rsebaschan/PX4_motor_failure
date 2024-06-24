@@ -142,6 +142,7 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   getSdfParam<std::string>(_sdf, "motorSpeedPubTopic", motor_speed_pub_topic_,
                            motor_speed_pub_topic_);
   getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic", motor_failure_sub_topic_,motor_failure_sub_topic_); //내가 추가한거 --------------
+  getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic1", motor_failure_sub_topic_1,motor_failure_sub_topic_1); //내가 추가한거 --------------
 
 
   getSdfParam<double>(_sdf, "rotorDragCoefficient", rotor_drag_coefficient_, rotor_drag_coefficient_);
@@ -170,6 +171,7 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   command_sub_ = node_handle_->Subscribe<mav_msgs::msgs::CommandMotorSpeed>("~/" + model_->GetName() + command_sub_topic_, &GazeboMotorModel::VelocityCallback, this);
   std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_ << std::endl;     //내가 수정 ---------------------
+  std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_1 << std::endl;     //내가 수정 ---------------------
 
   //motor_failure_sub_: 이는 구독자 객체를 저장하기 위한 변수입니다. 이 변수를 통해 생성된 구독자와의 상호작용이 이루어집니다.
   //node_handle_: Gazebo에서 통신을 관리하기 위한 노드 핸들 객체입니다. Subscribe 메서드를 호출하여 새로운 구독자를 생성합니다.
@@ -178,6 +180,7 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   //motor_failure_sub_topic_: 구독할 토픽의 이름을 나타내는 문자열 변수입니다. 이 변수에 저장된 이름의 토픽에 대한 메시지가 발행될 때마다 지정된 콜백 함수가 호출됩니다.
   //this: 콜백 함수가 속한 객체의 포인터입니다. this 키워드는 현재 인스턴스를 가리키며, 여기서는 GazeboMotorModel 객체 자신을 의미합니다. 약간 self그런건가??
   motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num", &GazeboMotorModel::MotorFailureCallback, this);  //이부분은 수정했다 //내가 수정한거---------
+  motor_failure_sub_1 = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num1", &GazeboMotorModel::MotorFailureCallback1, this);  //이부분은 수정했다 //내가 수정한거---------
 
 
   // FIXME: Commented out to prevent warnings about queue limit reached.
@@ -206,6 +209,7 @@ void GazeboMotorModel::OnUpdate(const common::UpdateInfo& _info) {
   prev_sim_time_ = _info.simTime.Double();
   UpdateForcesAndMoments();
   UpdateMotorFail();  //이부분 수정했다
+  UpdateMotorFail1();  //이부분 수정했다
   Publish();
 }
 
@@ -220,7 +224,13 @@ void GazeboMotorModel::VelocityCallback(CommandMotorSpeedPtr &rot_velocities) {
 //fail_msg->data()를 호출하여 메시지에서 모터 고장 번호를 추출하고, 이를 motor_Failure_Number_ 멤버 변수에 저장합니다.
 //data() 메서드는 msgs::Int 타입의 메시지에서 실제 정수 값을 가져오는 데 사용됩니다.
 void GazeboMotorModel::MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg) {//이부분 수정했다
+  // std::cout << "Received motor failure message for motor 1: " << fail_msg->data() << std::endl;
   motor_Failure_Number_ = fail_msg->data();
+}
+
+void GazeboMotorModel::MotorFailureCallback1(const boost::shared_ptr<const msgs::Int> &fail_msg) {//이부분 수정했다
+
+  motor_Failure_Number_1 = fail_msg->data();
 }
 
 void GazeboMotorModel::UpdateForcesAndMoments() {
@@ -325,6 +335,25 @@ void GazeboMotorModel::UpdateMotorFail() {
        //motor_constant_ = kDefaultMotorConstant;
        std::cout << "Motor number [" << tmp_motor_num <<"] running! [Motor thrust = (default)]" << std::endl;
        screen_msg_flag = 1;
+     }
+  }
+}
+
+void GazeboMotorModel::UpdateMotorFail1() {
+  if (motor_number_ == motor_Failure_Number_1 - 1){
+    // motor_constant_ = 0.0;
+    joint_->SetVelocity(0,0);
+    if (screen_msg_flag1){
+      std::cout << "Motor number [" << motor_Failure_Number_1 <<"] failed!  [Motor thrust = 0]" << std::endl;
+      tmp_motor_num1 = motor_Failure_Number_1;
+
+      screen_msg_flag1 = 0;
+    }
+  }else if (motor_Failure_Number_1 == 0 && motor_number_ ==  tmp_motor_num1 - 1){
+     if (!screen_msg_flag1){
+       //motor_constant_ = kDefaultMotorConstant;
+       std::cout << "Motor number [" << tmp_motor_num1 <<"] running! [Motor thrust = (default)]" << std::endl;
+       screen_msg_flag1 = 1;
      }
   }
 }
