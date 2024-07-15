@@ -23,8 +23,12 @@ GazeboMotorFailure::GazeboMotorFailure() :
     ModelPlugin(),
     ROS_motor_num_sub_topic_(kDefaultROSMotorNumSubTopic),
     ROS_motor_num_sub_topic_1(kDefaultROSMotorNumSubTopic1),
+    ROS_motor_num_sub_topic_2(kDefaultROSMotorNumSubTopic2),
+    ROS_motor_num_sub_topic_3(kDefaultROSMotorNumSubTopic3),
     motor_failure_num_pub_topic_(kDefaultMotorFailureNumPubTopic),
-    motor_failure_num_pub_topic_1(kDefaultMotorFailureNumPubTopic1)
+    motor_failure_num_pub_topic_1(kDefaultMotorFailureNumPubTopic1),
+    motor_failure_num_pub_topic_2(kDefaultMotorFailureNumPubTopic2),
+    motor_failure_num_pub_topic_3(kDefaultMotorFailureNumPubTopic3)
 { }
 
 GazeboMotorFailure::~GazeboMotorFailure() {
@@ -48,6 +52,8 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   motor_failure_pub_ = node_handle_->Advertise<msgs::Int>("/gazebo/motor_failure_num", 1);
   motor_failure_pub_1 = node_handle_->Advertise<msgs::Int>("/gazebo/motor_failure_num1", 1);
+  motor_failure_pub_2 = node_handle_->Advertise<msgs::Int>("/gazebo/motor_failure_num2", 1);
+  motor_failure_pub_3 = node_handle_->Advertise<msgs::Int>("/gazebo/motor_failure_num3", 1);
   //motor_failure_pub_ 라는 퍼블리셔가 생기고 <msgs::Int>는 구독할 메시지의 타입을 가지는 motor_failure_num_pub_topic_ 을 pub 한다.
   //여기서 의문점 : <msgs::Int>는 구독할 메시지의 타입을 pub 한다고 했다. msgs::Int는 정수형 데이터를 담을 수 있는 메시지 타입으로, 여기서는 모터의 고장 번호 등 정수형 데이터를 발행하는 데 사용
   //여기서 의문점 : 그럼 motor_failure_num_pub_topic_ 은 msgs::Int 타입인데  if (_sdf->HasElement("MotorFailureNumPubTopic")) 여기를 보면 std::string 이라는데?
@@ -73,6 +79,24 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
       ROS_motor_num_sub_topic_1 = "/motor_failure/motor_number1";
   }
 
+  if (_sdf->HasElement("ROSMotorNumSubTopic2")) {    //sdf 파일에 지금 이 줄이 없다 ROSMotorNumSubTopic ******************************
+    this->ROS_motor_num_sub_topic_2 = _sdf->GetElement("ROSMotorNumSubTopic2")->Get<std::string>();
+  }
+  else
+  {
+      ROS_WARN("No ROSMotorNumSubTopic2 specified. Defaulting to '/motor_failure/motor_number2'.");
+      ROS_motor_num_sub_topic_2 = "/motor_failure/motor_number2";
+  }
+
+  if (_sdf->HasElement("ROSMotorNumSubTopic3")) {    //sdf 파일에 지금 이 줄이 없다 ROSMotorNumSubTopic ******************************
+    this->ROS_motor_num_sub_topic_3 = _sdf->GetElement("ROSMotorNumSubTopic3")->Get<std::string>();
+  }
+  else
+  {
+      ROS_WARN("No ROSMotorNumSubTopic3 specified. Defaulting to '/motor_failure/motor_number3'.");
+      ROS_motor_num_sub_topic_3 = "/motor_failure/motor_number3";
+  }
+
 
   //HasElement("MotorFailureNumPubTopic"): _sdf 객체의 HasElement 메서드는 주어진 이름("MotorFailureNumPubTopic")의 요소가 SDF 파일 내에 존재하는지를 검사합니다.
   //이 메서드는 불리언(boolean) 값을 반환하며, 해당 요소가 있을 경우 true, 없을 경우 false를 반환합니다.
@@ -88,6 +112,14 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   // }
   if (_sdf->HasElement("MotorFailureNumPubTopic1")) {   //sdf 파일에 지금 이 줄이 없다 MotorFailureNumPubTopic ******************************
     this->motor_failure_num_pub_topic_1 = _sdf->GetElement("MotorFailureNumPubTopic1")->Get<std::string>();
+  }
+
+  if (_sdf->HasElement("MotorFailureNumPubTopic2")) {   //sdf 파일에 지금 이 줄이 없다 MotorFailureNumPubTopic ******************************
+    this->motor_failure_num_pub_topic_2 = _sdf->GetElement("MotorFailureNumPubTopic2")->Get<std::string>();
+  }
+
+  if (_sdf->HasElement("MotorFailureNumPubTopic3")) {   //sdf 파일에 지금 이 줄이 없다 MotorFailureNumPubTopic ******************************
+    this->motor_failure_num_pub_topic_3 = _sdf->GetElement("MotorFailureNumPubTopic3")->Get<std::string>();
   }
 
   //내가 추가한거--------------------------------------------------------------------------------------------
@@ -107,10 +139,14 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   // Create a named topic, and subscribe to it.
   ros::SubscribeOptions so = ros::SubscribeOptions::create<std_msgs::Int32>("/motor_failure/motor_number", 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack, this, _1), ros::VoidPtr(), &this->rosQueue);
   ros::SubscribeOptions so1 = ros::SubscribeOptions::create<std_msgs::Int32>("/motor_failure/motor_number1", 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack1, this, _1), ros::VoidPtr(), &this->rosQueue);
+  ros::SubscribeOptions so2 = ros::SubscribeOptions::create<std_msgs::Int32>("/motor_failure/motor_number2", 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack2, this, _1), ros::VoidPtr(), &this->rosQueue);
+  ros::SubscribeOptions so3 = ros::SubscribeOptions::create<std_msgs::Int32>("/motor_failure/motor_number3", 1, boost::bind(&GazeboMotorFailure::motorFailNumCallBack3, this, _1), ros::VoidPtr(), &this->rosQueue);
 
 
   this->rosSub = this->rosNode->subscribe(so);
   this->rosSub1 = this->rosNode->subscribe(so1);
+  this->rosSub2 = this->rosNode->subscribe(so2);
+  this->rosSub3 = this->rosNode->subscribe(so3);
   //so는 구독 옵션을 담고 있는 객체
   //rosSub 가 node 이다. rosSub는 so라는 옵션을 사용한다.
 
@@ -120,6 +156,8 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   std::cout << "[gazebo_motor_failure_plugin]: Subscribe to ROS topic: "<< ROS_motor_num_sub_topic_ << std::endl;
   std::cout << "[gazebo_motor_failure_plugin]: Subscribe to ROS topic: "<< ROS_motor_num_sub_topic_1 << std::endl;
+  std::cout << "[gazebo_motor_failure_plugin]: Subscribe to ROS topic: "<< ROS_motor_num_sub_topic_2 << std::endl;
+  std::cout << "[gazebo_motor_failure_plugin]: Subscribe to ROS topic: "<< ROS_motor_num_sub_topic_3 << std::endl;
 
   //내가 추가한거--------------------------------------------------------------------------------------------
 
@@ -155,9 +193,13 @@ void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 void GazeboMotorFailure::OnUpdate(const common::UpdateInfo &info) {
     this->motor_failure_msg_.set_data(motor_Failure_Number_);
     this->motor_failure_msg_1.set_data(motor_Failure_Number_1);
+    this->motor_failure_msg_2.set_data(motor_Failure_Number_2);
+    this->motor_failure_msg_3.set_data(motor_Failure_Number_3);
     //motor_Failure_Number_ 는 gazebo_motor_model 에서 왔다. 정확하게 하면 MotorFailureCallback 콜백함수 지나서 왔다
     this->motor_failure_pub_->Publish(motor_failure_msg_);
     this->motor_failure_pub_1->Publish(motor_failure_msg_1);
+    this->motor_failure_pub_2->Publish(motor_failure_msg_2);
+    this->motor_failure_pub_3->Publish(motor_failure_msg_3);
     //rclcpp::spin_some(this->ros_node_);
     ros::spinOnce();  //내가 수정한거---------------------------------------------------
 }
@@ -171,6 +213,16 @@ void GazeboMotorFailure::motorFailNumCallBack(const std_msgs::Int32::ConstPtr& m
 void GazeboMotorFailure::motorFailNumCallBack1(const std_msgs::Int32::ConstPtr& msg) {
   this->motor_Failure_Number_1 = msg->data;//std_msgs::msg::Int32::SharedPtr msg 에서 data 라는 정보를 motor_Failure_Number_에 넣어라
   std::cout << "[gazebo_motor_failure_plugin]: Subscribe to " << ROS_motor_num_sub_topic_1 << std::endl;
+}
+
+void GazeboMotorFailure::motorFailNumCallBack2(const std_msgs::Int32::ConstPtr& msg) {
+  this->motor_Failure_Number_2 = msg->data;//std_msgs::msg::Int32::SharedPtr msg 에서 data 라는 정보를 motor_Failure_Number_에 넣어라
+  std::cout << "[gazebo_motor_failure_plugin]: Subscribe to " << ROS_motor_num_sub_topic_2 << std::endl;
+}
+
+void GazeboMotorFailure::motorFailNumCallBack3(const std_msgs::Int32::ConstPtr& msg) {
+  this->motor_Failure_Number_3 = msg->data;//std_msgs::msg::Int32::SharedPtr msg 에서 data 라는 정보를 motor_Failure_Number_에 넣어라
+  std::cout << "[gazebo_motor_failure_plugin]: Subscribe to " << ROS_motor_num_sub_topic_3 << std::endl;
 }
 
 //내가 추가한거 -------------------------------------------------------------------------------------------------

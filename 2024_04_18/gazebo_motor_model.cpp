@@ -143,6 +143,8 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
                            motor_speed_pub_topic_);
   getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic", motor_failure_sub_topic_,motor_failure_sub_topic_); //내가 추가한거 --------------
   getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic1", motor_failure_sub_topic_1,motor_failure_sub_topic_1); //내가 추가한거 --------------
+  getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic2", motor_failure_sub_topic_2,motor_failure_sub_topic_2); //내가 추가한거 --------------
+  getSdfParam<std::string>(_sdf, "ROSMotorNumSubTopic3", motor_failure_sub_topic_3,motor_failure_sub_topic_3); //내가 추가한거 --------------
 
 
   getSdfParam<double>(_sdf, "rotorDragCoefficient", rotor_drag_coefficient_, rotor_drag_coefficient_);
@@ -172,6 +174,9 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   command_sub_ = node_handle_->Subscribe<mav_msgs::msgs::CommandMotorSpeed>("~/" + model_->GetName() + command_sub_topic_, &GazeboMotorModel::VelocityCallback, this);
   std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_ << std::endl;     //내가 수정 ---------------------
   std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_1 << std::endl;     //내가 수정 ---------------------
+  std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_2 << std::endl;     //내가 수정 ---------------------
+  std::cout << "[gazebo_motor_model]: Subscribe to gz topic: "<< motor_failure_sub_topic_3 << std::endl;     //내가 수정 ---------------------
+
 
   //motor_failure_sub_: 이는 구독자 객체를 저장하기 위한 변수입니다. 이 변수를 통해 생성된 구독자와의 상호작용이 이루어집니다.
   //node_handle_: Gazebo에서 통신을 관리하기 위한 노드 핸들 객체입니다. Subscribe 메서드를 호출하여 새로운 구독자를 생성합니다.
@@ -181,6 +186,8 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   //this: 콜백 함수가 속한 객체의 포인터입니다. this 키워드는 현재 인스턴스를 가리키며, 여기서는 GazeboMotorModel 객체 자신을 의미합니다. 약간 self그런건가??
   motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num", &GazeboMotorModel::MotorFailureCallback, this);  //이부분은 수정했다 //내가 수정한거---------
   motor_failure_sub_1 = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num1", &GazeboMotorModel::MotorFailureCallback1, this);  //이부분은 수정했다 //내가 수정한거---------
+  motor_failure_sub_2 = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num2", &GazeboMotorModel::MotorFailureCallback2, this);  //이부분은 수정했다 //내가 수정한거---------
+  motor_failure_sub_3 = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num3", &GazeboMotorModel::MotorFailureCallback3, this);  //이부분은 수정했다 //내가 수정한거---------
 
 
   // FIXME: Commented out to prevent warnings about queue limit reached.
@@ -210,6 +217,8 @@ void GazeboMotorModel::OnUpdate(const common::UpdateInfo& _info) {
   UpdateForcesAndMoments();
   UpdateMotorFail();  //이부분 수정했다
   UpdateMotorFail1();  //이부분 수정했다
+  UpdateMotorFail2();  //이부분 수정했다
+  UpdateMotorFail3();  //이부분 수정했다
   Publish();
 }
 
@@ -231,6 +240,16 @@ void GazeboMotorModel::MotorFailureCallback(const boost::shared_ptr<const msgs::
 void GazeboMotorModel::MotorFailureCallback1(const boost::shared_ptr<const msgs::Int> &fail_msg) {//이부분 수정했다
 
   motor_Failure_Number_1 = fail_msg->data();
+}
+
+void GazeboMotorModel::MotorFailureCallback2(const boost::shared_ptr<const msgs::Int> &fail_msg) {//이부분 수정했다
+
+  motor_Failure_Number_2 = fail_msg->data();
+}
+
+void GazeboMotorModel::MotorFailureCallback3(const boost::shared_ptr<const msgs::Int> &fail_msg) {//이부분 수정했다
+
+  motor_Failure_Number_3 = fail_msg->data();
 }
 
 void GazeboMotorModel::UpdateForcesAndMoments() {
@@ -357,6 +376,45 @@ void GazeboMotorModel::UpdateMotorFail1() {
      }
   }
 }
+
+void GazeboMotorModel::UpdateMotorFail2() {
+  if (motor_number_ == motor_Failure_Number_2 - 1){
+    // motor_constant_ = 0.0;
+    joint_->SetVelocity(0,0);
+    if (screen_msg_flag2){
+      std::cout << "Motor number [" << motor_Failure_Number_2 <<"] failed!  [Motor thrust = 0]" << std::endl;
+      tmp_motor_num2 = motor_Failure_Number_2;
+
+      screen_msg_flag2 = 0;
+    }
+  }else if (motor_Failure_Number_2 == 0 && motor_number_ ==  tmp_motor_num2 - 1){
+     if (!screen_msg_flag2){
+       //motor_constant_ = kDefaultMotorConstant;
+       std::cout << "Motor number [" << tmp_motor_num2 <<"] running! [Motor thrust = (default)]" << std::endl;
+       screen_msg_flag2 = 1;
+     }
+  }
+}
+
+void GazeboMotorModel::UpdateMotorFail3() {
+  if (motor_number_ == motor_Failure_Number_3 - 1){
+    // motor_constant_ = 0.0;
+    joint_->SetVelocity(0,0);
+    if (screen_msg_flag3){
+      std::cout << "Motor number [" << motor_Failure_Number_3 <<"] failed!  [Motor thrust = 0]" << std::endl;
+      tmp_motor_num3 = motor_Failure_Number_3;
+
+      screen_msg_flag3 = 0;
+    }
+  }else if (motor_Failure_Number_3 == 0 && motor_number_ ==  tmp_motor_num3 - 1){
+     if (!screen_msg_flag3){
+       //motor_constant_ = kDefaultMotorConstant;
+       std::cout << "Motor number [" << tmp_motor_num3 <<"] running! [Motor thrust = (default)]" << std::endl;
+       screen_msg_flag3 = 1;
+     }
+  }
+}
+
 
 //typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
 //여기 msg에는 gazebo_wind_plugin에서 pub되는 wind_msg이다.
