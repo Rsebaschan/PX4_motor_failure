@@ -253,21 +253,39 @@ void GazeboMotorModel::MotorFailureCallback3(const boost::shared_ptr<const msgs:
 }
 
 void GazeboMotorModel::UpdateForcesAndMoments() {
-  motor_rot_vel_ = joint_->GetVelocity(0);
+  motor_rot_vel_ = joint_->GetVelocity(0); //Get the rotation rate of an axis(index)
+  //motor_rot_vel_ :  [rad/s]
+  //M_PI = 3.141592
+  //motor_rot_vel_ / (2 * M_PI) : motor_rot_vel의 단위가 [rad/s] 인데 이거를 [Revolution / sec]로 바꾸는것
+  //aliasing 방지 : 에일리어싱은 샘플링 주파수가 낮으면 실제 데이터의 모든 값을 담을수가 없다.?? 그런거??
   if (motor_rot_vel_ / (2 * M_PI) > 1 / (2 * sampling_time_)) {
     gzerr << "Aliasing on motor [" << motor_number_ << "] might occur. Consider making smaller simulation time steps or raising the rotor_velocity_slowdown_sim_ param.\n";
   }
   double real_motor_velocity = motor_rot_vel_ * rotor_velocity_slowdown_sim_;
+  // motor_rot_vel_: 라디안/초 (rad/s)
+  //rotor_velocity_slowdown_sim_: 무차원 : 시뮬레이션에서 실제 속도를 반영하기 위한 조정 상수입니다.
+  //real_motor_velocity: 라디안/초 (rad/s)
+
+
+  std::cout << "vvvvvvvvvvvvvvvvvvvv [" << real_motor_velocity << "] " << a++ << std::endl;
+  // Ct 는 무차원 : thrust coefficient
+  // F= ma   // [N] = [kg][m/s^2]
+  // motor_constant_ : [kg*m]
   double force = real_motor_velocity * std::abs(real_motor_velocity) * motor_constant_;
+
   if(!reversible_) {
     // Not allowed to have negative thrust.
     force = std::abs(force);
   }
+  std::cout << "fffffffffffffff [" << force << "] "  << std::endl;
 
   // scale down force linearly with forward speed
   // XXX this has to be modelled better
   //
 #if GAZEBO_MAJOR_VERSION >= 9
+      /// \brief Get the linear velocity of the origin of the link frame,
+      ///        expressed in the world frame.
+      /// \return Linear velocity of the link frame.
   ignition::math::Vector3d body_velocity = link_->WorldLinearVel();
   ignition::math::Vector3d joint_axis = joint_->GlobalAxis(0);
 #else
@@ -275,35 +293,100 @@ void GazeboMotorModel::UpdateForcesAndMoments() {
   ignition::math::Vector3d joint_axis = ignitionFromGazeboMath(joint_->GetGlobalAxis(0));
 #endif
 
+  // body_velocity : 각 로터의 world frame 바탕인 velocity를 가지고 있다 옥토는 8개
+  // 초기에 상태
+  // [0.000495 0.000687 -0.000855] 4176
+  //  [0.000496 0.000688 0.000617] 4176
+  //  [0.000496 0.000687 0.000516] 4176
+  //  [0.000496 0.000689 0.003256] 4176
+  //  [0.000495 0.000687 -0.003495] 4176
+  //  [0.000496 0.000688 -0.000756] 4176
+  //  [0.000496 0.000687 -0.002127] 4176
+  //  [0.000496 0.000688 0.001886] 4176
+
+
+  // joint_axis : 각 로터의 world frame 바탕인 축을 가져온다.
+//    [9e-06 0.00067 1] 5548
+//  [2.6e-05 0.000672 1] 5548
+//  [1.8e-05 0.000648 1] 5548
+//  [2.4e-05 0.000648 1] 5548
+//  [1.1e-05 0.00065 1] 5548
+//  [3e-05 0.000651 1] 5548
+//  [9e-06 0.00067 1] 5548
+//  [2.1e-05 0.000668 1] 5548
+
   ignition::math::Vector3d relative_wind_velocity = body_velocity - wind_vel_;
+  // std::cout << "hihihihi [" << joint_axis << "] " << a++ << std::endl;
+
   ignition::math::Vector3d velocity_parallel_to_rotor_axis = (relative_wind_velocity.Dot(joint_axis)) * joint_axis;
+    // velocity_parallel_to_rotor_axis : 로터 축에 평행한 속도 성분을 계산한 값
+
+  // std::cout << "hihihihi [" << velocity_parallel_to_rotor_axis << "] " << a++ << std::endl;
+  //velocity_parallel_to_rotor_axis
+//  [0.000748 -0.054489 0.604408] 6291
+//  [0.001442 -0.101861 1.12928] 6291
+//  [0.002222 -0.055256 0.612941] 6291
+//  [0.002314 -0.056979 0.631233] 6291
+//  [0.003897 -0.099503 1.10332] 6291
+//  [0.004035 -0.101197 1.12119] 6291
+//  [0.001384 -0.100388 1.11246] 6291
+//  [0.00071 -0.056189 0.622562] 6291
+
+
+
   double vel = velocity_parallel_to_rotor_axis.Length();
+
   double scalar = 1 - vel / 25.0; // at 25 m/s the rotor will not produce any force anymore
   scalar = ignition::math::clamp(scalar, 0.0, 1.0);
   // Apply a force to the link.
   link_->AddRelativeForce(ignition::math::Vector3d(0, 0, force * scalar));
+  std::cout << "wwwwwwwwwwwwwww [" << ignition::math::Vector3d(0, 0, force * scalar) << "] "  << std::endl;
 
   // Forces from Philppe Martin's and Erwan Salaün's
   // 2010 IEEE Conference on Robotics and Automation paper
   // The True Role of Accelerometer Feedback in Quadrotor Control
   // - \omega * \lambda_1 * V_A^{\perp}
   ignition::math::Vector3d velocity_perpendicular_to_rotor_axis = relative_wind_velocity - (relative_wind_velocity.Dot(joint_axis)) * joint_axis;
+
+  // velocity_perpendicular_to_rotor_axis : 로터 축에 수직한 바람의 속도 벡터. : 계산하다보니 이거 z축 바람만 영향을 받는듯?
+
   ignition::math::Vector3d air_drag = -std::abs(real_motor_velocity) * rotor_drag_coefficient_ * velocity_perpendicular_to_rotor_axis;
   // Apply air_drag to link.
   link_->AddForce(air_drag);
+  std::cout << "aaaaaaaaaaaaaaaaaaa [" << air_drag << "] "  << std::endl;
+
+
+  // std::cout << "gggggggggggggggggggg [" << link_->WorldForce() << "] "  << std::endl;
+
   // Moments
   // Getting the parent link, such that the resulting torques can be applied to it.
-  physics::Link_V parent_links = link_->GetParentJointsLinks();
+  physics::Link_V parent_links = link_->GetParentJointsLinks(); //link_->GetParentJointsLinks()를 사용하여 현재 링크에 연결된 부모 링크들을 가져옵니다.
   // The tansformation from the parent_link to the link_.
 #if GAZEBO_MAJOR_VERSION >= 9
   ignition::math::Pose3d pose_difference = link_->WorldCoGPose() - parent_links.at(0)->WorldCoGPose();
+  //link_->WorldCoGPose(): 현재 링크(rotor)의 질량 중심(World Center of Gravity, CoG) 위치와 자세를 반환합니다.
+  //parent_links.at(0)->WorldCoGPose(): 부모 링크(base_link p.s sdf파일 참조)의 질량 중심 위치와 자세를 반환합니다.
 #else
   ignition::math::Pose3d pose_difference = ignitionFromGazeboMath(link_->GetWorldCoGPose() - parent_links.at(0)->GetWorldCoGPose());
 #endif
+
+  std::cout << "xxxxxxxxxxxxxxxxxxx [" << link_->WorldCoGPose() << "] "  << std::endl;
+  std::cout << "zzzzzzzzzzzzzzzzzzz [" << parent_links.at(0)->WorldCoGPose() << "] "  << std::endl;
+
+  // const static int CCW = 1;
+  // const static int CW = -1; drag torque는 힘의 반대로 작용해야하기 때문에 CW 를 -1 로 잡았다.
+
   ignition::math::Vector3d drag_torque(0, 0, -turning_direction_ * force * moment_constant_);
+  //drag_torque : 동력 전달 계통(동력을 전달하는 장치로서 클러치, 변속기, 추진축, 감속기, 차동기, 후차축 등의 부품)의 회전 저항을 말하며, 부하가 걸려 있지 않은 상태의 동력 전달 계통을 회전시키는 데 필요한 토크를 이른다.
+
+
   // Transforming the drag torque into the parent frame to handle arbitrary rotor orientations.
+  //drag_torque_parent_frame는 부모 링크의 프레임에서 표현된 항력 토크 벡터입니다.
   ignition::math::Vector3d drag_torque_parent_frame = pose_difference.Rot().RotateVector(drag_torque);
   parent_links.at(0)->AddRelativeTorque(drag_torque_parent_frame);
+  //drag_torque_parent_frame : 역시 힘의 반대방향이 적용된다.
+ std::cout << "dddddddddddddd [" << drag_torque_parent_frame << "] "  << std::endl;
+
 
   ignition::math::Vector3d rolling_moment;
   // - \omega * \mu_1 * V_A^{\perp}
@@ -336,6 +419,9 @@ void GazeboMotorModel::UpdateForcesAndMoments() {
   }
 #else
   joint_->SetVelocity(0, turning_direction_ * ref_motor_rot_vel / rotor_velocity_slowdown_sim_);
+  //결국 이게 최종으로 들어가는듯 하다.
+  //ref_motor_rot_vel / rotor_velocity_slowdown_sim_ 하는 이유는 확실하지 않지만, 시뮬레이션을 고려해서 rotor_velocity_slowdown_sim_ 을 곱했지만
+  //모터에 주입할때는 시뮬레이션 고려한 상수인 rotor_velocity_slowdown_sim_ 를 나누고 주입해야한다.
 #endif /* if 0 */
 }
 //여기서부터는 있는게 없다
@@ -356,6 +442,10 @@ void GazeboMotorModel::UpdateMotorFail() {
        screen_msg_flag = 1;
      }
   }
+
+
+
+
 }
 
 void GazeboMotorModel::UpdateMotorFail1() {

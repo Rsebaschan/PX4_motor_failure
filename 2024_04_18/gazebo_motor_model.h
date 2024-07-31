@@ -49,6 +49,8 @@ namespace gazebo
   static const std::string kDefaultCommandSubTopic = "/gazebo/command/motor_speed";
   static const std::string kDefaultMotorFailureNumSubTopic = "/gazebo/motor_failure_num";
   static const std::string kDefaultMotorFailureNumSubTopic1 = "/gazebo/motor_failure_num1";
+  static const std::string kDefaultMotorFailureNumSubTopic2 = "/gazebo/motor_failure_num2";
+  static const std::string kDefaultMotorFailureNumSubTopic3 = "/gazebo/motor_failure_num3";
   static const std::string kDefaultMotorVelocityPubTopic = "/motor_speed";
   static const std::string wind_sub_topic_ = "/world_wind";
 
@@ -93,6 +95,8 @@ namespace gazebo
     /// \details Doing joint_->SetVelocity(0,0) for the flagged motor to fail
     virtual void UpdateMotorFail();
     virtual void UpdateMotorFail1();
+    virtual void UpdateMotorFail2();
+    virtual void UpdateMotorFail3();
     // UpdateMotorFail 함수는 모터 고장 시나리오를 시뮬레이션하기 위한 메서드입니다.
     // 이 함수의 주요 목적은 설정된 모터 고장 번호(motor_Failure_Number_)를 확인하고, 해당 모터를 실패 상태로 전환하는 것입니다.
     // 함수 설명에서 언급된 대로, 모터를 실패 상태로 만들기 위해 joint_->SetVelocity(0,0)을 호출합니다.
@@ -106,6 +110,8 @@ namespace gazebo
     std::string command_sub_topic_{kDefaultCommandSubTopic};               // 모터 속도 명령을 sub하는 토픽
     std::string motor_failure_sub_topic_{kDefaultMotorFailureNumSubTopic}; // 모터 고장 번호를 sub하는 토픽  //  static const std::string kDefaultMotorFailureNumSubTopic = "/gazebo/motor_failure_num";
     std::string motor_failure_sub_topic_1{kDefaultMotorFailureNumSubTopic1};
+    std::string motor_failure_sub_topic_2{kDefaultMotorFailureNumSubTopic2};
+    std::string motor_failure_sub_topic_3{kDefaultMotorFailureNumSubTopic3};
     std::string joint_name_;                                               // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
     std::string link_name_;                                                // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
     std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};     // 모터 속도 정보를 발행하는 토픽
@@ -118,12 +124,19 @@ namespace gazebo
 
     int motor_Failure_Number_{0}; /*!< motor_Failure_Number is (motor_number_ + 1) as (0) is considered no_fail. Publish accordingly */
     int motor_Failure_Number_1{0};
+    int motor_Failure_Number_2{0};
+    int motor_Failure_Number_3{0};
     // 현재 실패한 모터의 번호입니다. 0은 모터 고장이 없음
     int tmp_motor_num; // A temporary variable used to print msg
     int tmp_motor_num1;
+    int tmp_motor_num2;
+    int tmp_motor_num3;
 
     int screen_msg_flag = 1;
     int screen_msg_flag1 = 1;
+    int screen_msg_flag2 = 1;
+    int screen_msg_flag3 = 1;
+    int a = 0;
 
     // max_force_, max_rot_velocity_, moment_constant_, motor_constant_: 모터의 최대 힘, 최대 회전 속도, 모멘트 상수, 모터 상수 등 모터의 물리적 특성
     double max_force_{kDefaultMaxForce};
@@ -144,6 +157,8 @@ namespace gazebo
     transport::SubscriberPtr command_sub_;       // Gazebo 및 ROS 통신을 위한 서브스크라이버 객체
     transport::SubscriberPtr motor_failure_sub_; /*!< Subscribing to motor_failure_sub_topic_; receiving motor number to fail, as an integer */
     transport::SubscriberPtr motor_failure_sub_1;
+    transport::SubscriberPtr motor_failure_sub_2;
+    transport::SubscriberPtr motor_failure_sub_3;
     ////Gazebo 및 ROS 통신을 위한 서브스크라이버 객체
     transport::SubscriberPtr wind_sub_; ////Gazebo 및 ROS 통신을 위한 서브스크라이버 객체
 
@@ -172,6 +187,8 @@ namespace gazebo
     // MotorFailureCallback 모터 고장 메시지를 처리하는 콜백 함수
     void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg);           /*!< Callback for the motor_failure_sub_ subscriber */
     void MotorFailureCallback1(const boost::shared_ptr<const msgs::Int> &fail_msg);
+    void MotorFailureCallback2(const boost::shared_ptr<const msgs::Int> &fail_msg);
+    void MotorFailureCallback3(const boost::shared_ptr<const msgs::Int> &fail_msg);
     void WindVelocityCallback(const boost::shared_ptr<const physics_msgs::msgs::Wind> &msg); // 풍속 변경에 대응하는 콜백 함수
     // WindVelocityCallback 은  boost::shared_ptr<Publisher> 이러한 타입인 publisher가 쏘는 physics_msgs::msgs::Wind 타입의 msg를 받는다?
     // 그래서 gazebo_wind_plugin.h 파일의 physics_msgs::msgs::Wind wind_msg; 을 받는다?

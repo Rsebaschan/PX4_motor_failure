@@ -37,6 +37,13 @@ GazeboMotorFailure::~GazeboMotorFailure() {
 
 void GazeboMotorFailure::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
+  // 이거 지우면 안됨. 초기화 값을 설정해줘야 처음 실행했을때 랜덤으로 값이 안들어간다
+    motor_Failure_Number_ = 0;
+    motor_Failure_Number_1 = 10;
+    motor_Failure_Number_2 = 20;
+    motor_Failure_Number_3 = 30;
+  //
+
   this->namespace_.clear();
 
   if (_sdf->HasElement("robotNamespace"))
