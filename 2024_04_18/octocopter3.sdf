@@ -7,10 +7,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>19.0939</mass>
         <inertia>
-          <ixx>7.46</ixx>
+          <ixx>1.52</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>1.52</iyy>
+          <iyy>7.46</iyy>
           <iyz>0</iyz>
           <izz>8.88</izz>
         </inertia>
@@ -92,10 +92,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -157,10 +157,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -222,10 +222,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -287,10 +287,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -352,10 +352,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -417,10 +417,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -482,10 +482,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -547,10 +547,10 @@
         <pose>0 0 0 0 0 0</pose>
         <mass>0.085251</mass>
         <inertia>
-          <ixx>1.545e-05</ixx>
+          <ixx>0.00073574</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.00073574</iyy>
+          <iyy>1.545e-05</iyy>
           <iyz>0</iyz>
           <izz>0.00074861</izz>
         </inertia>
@@ -618,7 +618,7 @@
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -635,7 +635,7 @@
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -652,7 +652,7 @@
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -669,7 +669,7 @@
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -686,7 +686,7 @@
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -703,7 +703,7 @@
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -720,7 +720,7 @@
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -737,7 +737,7 @@
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
-      <maxRotVelocity>4000</maxRotVelocity>
+      <maxRotVelocity>4063</maxRotVelocity>
       <motorConstant>8.54858e-05</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
@@ -918,7 +918,13 @@
     <plugin name="motor_failure" filename="libgazebo_motor_failure_plugin.so">
       <robotNamespace />
       <ROSMotorNumSubTopic>/motor_failure/motor_number</ROSMotorNumSubTopic>
+      <ROSMotorNumSubTopic1>/motor_failure/motor_number1</ROSMotorNumSubTopic1>
+      <ROSMotorNumSubTopic2>/motor_failure/motor_number2</ROSMotorNumSubTopic2>
+      <ROSMotorNumSubTopic3>/motor_failure/motor_number3</ROSMotorNumSubTopic3>
       <MotorFailureNumPubTopic>/gazebo/motor_failure_num</MotorFailureNumPubTopic>
+      <MotorFailureNumPubTopic1>/gazebo/motor_failure_num1</MotorFailureNumPubTopic1>
+      <MotorFailureNumPubTopic2>/gazebo/motor_failure_num2</MotorFailureNumPubTopic2>
+      <MotorFailureNumPubTopic3>/gazebo/motor_failure_num3</MotorFailureNumPubTopic3>
     </plugin>
     <!--lidar
     <include>
