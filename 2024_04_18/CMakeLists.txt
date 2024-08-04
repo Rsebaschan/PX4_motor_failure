@@ -478,6 +478,10 @@ if (BUILD_ROS_PLUGINS)
   list(APPEND plugins gazebo_motor_failure_plugin)
   message(STATUS "adding gazebo_motor_failure_plugin to build")
 
+  add_library(gazebo_ros_communicate_plugin SHARED src/gazebo_ros_communicate_plugin.cpp)
+  target_link_libraries(gazebo_ros_communicate_plugin ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES} ${catkin_LIBRARIES})
+  list(APPEND plugins gazebo_ros_communicate_plugin)
+  message(STATUS "adding gazebo_ros_communicate_plugin to build")
 
   # include_directories(
   #   include

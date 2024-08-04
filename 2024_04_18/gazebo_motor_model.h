@@ -112,9 +112,9 @@ namespace gazebo
     std::string motor_failure_sub_topic_1{kDefaultMotorFailureNumSubTopic1};
     std::string motor_failure_sub_topic_2{kDefaultMotorFailureNumSubTopic2};
     std::string motor_failure_sub_topic_3{kDefaultMotorFailureNumSubTopic3};
-    std::string joint_name_;                                               // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
-    std::string link_name_;                                                // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
-    std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};     // 모터 속도 정보를 발행하는 토픽
+    std::string joint_name_;                                           // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
+    std::string link_name_;                                            // Gazebo 모델 내의 특정 조인트와 링크의 이름입니다. 이들은 모터와 연결된 물리적 요소를 지정
+    std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic}; // 모터 속도 정보를 발행하는 토픽
     std::string namespace_;
 
     msgs::Int motor_failure_num_pub_topic_;
@@ -185,7 +185,7 @@ namespace gazebo
     std_msgs::msgs::Float turning_velocity_msg_;
     void VelocityCallback(CommandMotorSpeedPtr &rot_velocities); // 모터 속도 명령을 처리하는 콜백 함수
     // MotorFailureCallback 모터 고장 메시지를 처리하는 콜백 함수
-    void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg);           /*!< Callback for the motor_failure_sub_ subscriber */
+    void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg); /*!< Callback for the motor_failure_sub_ subscriber */
     void MotorFailureCallback1(const boost::shared_ptr<const msgs::Int> &fail_msg);
     void MotorFailureCallback2(const boost::shared_ptr<const msgs::Int> &fail_msg);
     void MotorFailureCallback3(const boost::shared_ptr<const msgs::Int> &fail_msg);
