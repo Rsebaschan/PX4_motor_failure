@@ -33,7 +33,7 @@ namespace gazebo
     transport::NodePtr node_handle;                                    // Gazebo 노드 핸들
     transport::SubscriberPtr motor_velocity_sub;                       // Gazebo 구독자
     ros::NodeHandle *rosNode;                                          // ROS 노드 핸들
-    ros::Publisher motor_velocity_pub;                                 // ROS 퍼블리셔
+    ros::Publisher my_motor_velocity_pub;                              // ROS 퍼블리셔
     std_msgs::Float64 my_motor_velocity;                               // ROS 메시지
     event::ConnectionPtr updateConnection;                             // Gazebo 업데이트 연결
     static const std::string kDefaultCommunicateMotorVelocityPubTopic; // 기본 모터 속도 발행 토픽
@@ -41,6 +41,7 @@ namespace gazebo
     physics::ModelPtr model_;                                          // 모델 포인터
     std::string namespace_;                                            // 네임스페이스
     int communicate_motor_Number{0};
+    int a = 0;
   };
 
 }

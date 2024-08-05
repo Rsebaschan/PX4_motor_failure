@@ -57,12 +57,12 @@ namespace gazebo
         {
             int argc = 0;
             char **argv = nullptr;
-            ros::init(argc, argv, "motor_velocity_pub", ros::init_options::NoSigintHandler);
+            ros::init(argc, argv, "my_motor_velocity_pub", ros::init_options::NoSigintHandler);
         }
 
         rosNode = new ros::NodeHandle(namespace_);
-        motor_velocity_pub = rosNode->advertise<std_msgs::Float64>("/my/octocopter3/motor_speed", 10);
-        std::cout << "[gazebo_ros_communicate_plugin.cpp] ROS node initialized and topic advertised: /my/octocopter3/motor_speed" << std::endl;
+        my_motor_velocity_pub = rosNode->advertise<std_msgs::Float64>("/my/octocopter3/motor_speed/" + std::to_string(communicate_motor_Number), 10);
+        std::cout << "[gazebo_ros_communicate_plugin.cpp] ROS node initialized and topic advertised: /my/octocopter3/motor_speed/" << std::endl;
 
         updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&MotorVelocityPlugin::OnUpdate, this));
     }
@@ -73,17 +73,17 @@ namespace gazebo
         if (msg->has_data())
         {
             my_motor_velocity.data = msg->data();
-            std::cout << "[gazebo_ros_communicate_plugin.cpp] Received motor velocity: " << my_motor_velocity.data << std::endl;
+            std::cout << "[gazebo_ros_communicate_plugin.cpp] Received motor velocity: " << my_motor_velocity.data << "   " << a++ << std::endl;
         }
         else
         {
-            std::cout << "[gazebo_ros_communicate_plugin.cpp] Received a message that does not contain a double value." << std::endl;
+            std::cout << "[gazebo_ros_communicate_plugin.cpp] Received a message that does not contain a  value." << std::endl;
         }
     }
 
     void MotorVelocityPlugin::OnUpdate()
     {
-        motor_velocity_pub.publish(my_motor_velocity);
+        my_motor_velocity_pub.publish(my_motor_velocity);
         // std::cout << "Published motor velocity: " << my_motor_velocity.data << std::endl;
     }
 
