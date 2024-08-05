@@ -931,34 +931,41 @@
       <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
       <communicatemotorNumber>0</communicatemotorNumber>
     </plugin>
-    <!-- <plugin name="gazebo_ros_rear_left" filename="libgazebo_ros_communicate_plugin.so">
+    <plugin name="gazebo_ros_rear_left" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/1</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>1</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_mid_front_right" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/2</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>2</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_rear_right" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/3</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>3</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_front_left" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/4</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>4</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_mid_rear_left" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/5</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>5</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_mid_front_left" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/6</communicatemotorSpeedPubTopic>
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>6</communicatemotorNumber>
     </plugin>
     <plugin name="gazebo_ros_mid_rear_right" filename="libgazebo_ros_communicate_plugin.so">
       <robotNamespace />
-      <communicatemotorSpeedPubTopic>/motor_speed/7</communicatemotorSpeedPubTopic>
-    </plugin> -->
+      <communicatemotorSpeedPubTopic>/gazebo/default/octocopter3/motor_speed/</communicatemotorSpeedPubTopic>
+      <communicatemotorNumber>7</communicatemotorNumber>
+    </plugin>
 
     <!--lidar
     <include>
