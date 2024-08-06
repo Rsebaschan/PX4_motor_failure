@@ -619,8 +619,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>0</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -636,8 +636,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>1</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -653,8 +653,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>2</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -670,8 +670,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>3</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -687,8 +687,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>4</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -704,8 +704,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>5</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -721,8 +721,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>6</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -738,8 +738,8 @@
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
       <maxRotVelocity>4063</maxRotVelocity>
-      <motorConstant>8.54858e-05</motorConstant>
-      <momentConstant>0.06</momentConstant>
+      <motorConstant>0.00053527</motorConstant>
+      <momentConstant>0.045954635</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <motorNumber>7</motorNumber>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
@@ -838,7 +838,7 @@
         <channel name='rotor1'>
           <input_index>0</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -846,7 +846,7 @@
         <channel name='rotor2'>
           <input_index>1</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -854,7 +854,7 @@
         <channel name='rotor3'>
           <input_index>2</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -862,7 +862,7 @@
         <channel name='rotor4'>
           <input_index>3</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -870,7 +870,7 @@
         <channel name='rotor5'>
           <input_index>4</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -878,7 +878,7 @@
         <channel name='rotor6'>
           <input_index>5</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -886,7 +886,7 @@
         <channel name='rotor7'>
           <input_index>6</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
@@ -894,7 +894,7 @@
         <channel name='rotor8'>
           <input_index>7</input_index>
           <input_offset>0</input_offset>
-          <input_scaling>1500</input_scaling>
+          <input_scaling>800</input_scaling>
           <zero_position_disarmed>0</zero_position_disarmed>
           <zero_position_armed>100</zero_position_armed>
           <joint_control_type>velocity</joint_control_type>
