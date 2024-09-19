@@ -447,6 +447,8 @@ void MavlinkInterface::pollForMAVLinkMessages()
 
   received_actuator_ = false;
 
+  // while은 {} 중괄호에서 조건식을 검사후에 루프문을 반복한다.
+  // do ~ while 은 {}중괄호 부분을 한번 실행한 후에 조건식에 따라 루프문을 반복한다.
   do
   {
     const bool needs_to_wait_for_actuator = received_first_actuator_ && enable_lockstep_;

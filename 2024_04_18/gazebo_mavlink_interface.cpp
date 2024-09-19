@@ -528,7 +528,7 @@ namespace gazebo
     motor_velocity_reference_pub_ = node_handle_->Advertise<mav_msgs::msgs::CommandMotorSpeed>("~/" + model_->GetName() + motor_velocity_reference_pub_topic_, 1);
 
     std::string topic_name = "~/" + model_->GetName() + motor_velocity_reference_pub_topic_;
-    std::cout << "motor_velocity_reference_pub_ Publishing to topic: " << topic_name << std::endl;
+    std::cout << "[gazebo_mavlink_interface]: motor_velocity_reference_pub_ Publishing to topic: " << topic_name << std::endl;
     // motor_velocity_reference_pub_ Publishing to topic: ~/iris/gazebo/command/motor_speed 이렇게 출력된다.
     // gz topic -l 에서는 /gazebo/default/iris/gazebo/command/motor_speed 이게 그거다.
 
@@ -685,13 +685,13 @@ namespace gazebo
       mavlink_interface_->pollFromQgcAndSdk();
       if (!mavlink_interface_->SerialEnabled())
       {
-        // pollForMAVLinkMessages 함수에서 handle_message 함수가 실행된다.
-        // 이로 인해 mavlink_interface.cpp 파일의 handle_actuator_controls 함수가 실행되고 input_reference_ 에 값이 생성되게 된다.
         mavlink_interface_->pollForMAVLinkMessages();
       }
     }
     else
     {
+      // pollForMAVLinkMessages 함수에서 handle_message 함수가 실행된다.
+      // 이로 인해 mavlink_interface.cpp 파일의 handle_actuator_controls 함수가 실행되고 input_reference_ 에 값이 생성되게 된다.
       mavlink_interface_->pollForMAVLinkMessages();
     }
 
@@ -1379,7 +1379,7 @@ namespace gazebo
 
     // for (int i = 0; i < actuator_controls.size(); i++)
     // {
-    //   std::cout << "actuator_controls[" << i << "]: " << actuator_controls[i] << "  a = " << a << std::endl;
+    //   std::cout << "[gazebo_mavlink_interface] actuator_controls[" << i << "]: " << actuator_controls[i] << "  a = " << a << std::endl;
     // }
     // a++;
 

@@ -37,7 +37,7 @@ namespace gazebo
     turning_velocity_msg_.set_data(joint_->GetVelocity(0));
     // GetVelocity(0) 메서드는 해당 조인트의 첫 번째 축(0번 인덱스)에 대한 현재 속도를 반환합니다.
     // 반환된 현재 속도를 turning_velocity_msg_ 객체에 넣는다.
-    std::cout << "turning_velocity_msg_ [" << turning_velocity_msg_.data() << "] " << "  a = " << a++ << std::endl;
+    // std::cout << "turning_velocity_msg_ [" << turning_velocity_msg_.data() << "] " << "  a = " << a++ << std::endl;
 
     //  FIXME: Commented out to prevent warnings about queue limit reached.
     motor_velocity_pub_->Publish(turning_velocity_msg_); // 이부분 수정했다
@@ -469,7 +469,7 @@ namespace gazebo
     if (motor_number_ == motor_Failure_Number_ - 1)
     {
       // motor_constant_ = 0.0;
-      joint_->SetVelocity(0, 10);
+      joint_->SetVelocity(0, 0);
       if (screen_msg_flag)
       {
         std::cout << "Motor number [" << motor_Failure_Number_ << "] failed!  [Motor thrust = 0]" << std::endl;
