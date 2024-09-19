@@ -91,6 +91,7 @@ namespace gazebo
     // void testProto(MotorSpeedPtr &msg);
   protected:
     virtual void UpdateForcesAndMoments();
+
     /// \brief A function to check the motor_Failure_Number_ and stimulate motor fail
     /// \details Doing joint_->SetVelocity(0,0) for the flagged motor to fail
     virtual void UpdateMotorFail();
@@ -103,6 +104,7 @@ namespace gazebo
     // 이 호출은 지정된 모터의 속도를 0으로 설정하여, 실제로 해당 모터가 작동을 멈춘 것처럼 행동하게 합니다.
     // 함수 내에서 motor_Failure_Number_ 변수는 고장 난 모터의 번호를 나타냅니다.
     // 이 변수의 값에 따라 해당 모터의 joint_ 객체의 SetVelocity 메서드를 호출하여 모터의 속도를 0으로 설정합니다.
+
     virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
     virtual void OnUpdate(const common::UpdateInfo & /*_info*/);
 
@@ -118,6 +120,9 @@ namespace gazebo
     std::string namespace_;
 
     msgs::Int motor_failure_num_pub_topic_;
+    msgs::Int motor_failure_num_pub_topic_1;
+    msgs::Int motor_failure_num_pub_topic_2;
+    msgs::Int motor_failure_num_pub_topic_3;
 
     int motor_number_{0};                          // 모터의 고유 번호입니다. 이 번호는 모터를 식별하는 데 사용
     int turning_direction_{turning_direction::CW}; // 모터의 회전 방향을 나타냅니다. turning_direction::CW는 시계 방향을 의미
@@ -126,6 +131,7 @@ namespace gazebo
     int motor_Failure_Number_1{0};
     int motor_Failure_Number_2{0};
     int motor_Failure_Number_3{0};
+
     // 현재 실패한 모터의 번호입니다. 0은 모터 고장이 없음
     int tmp_motor_num; // A temporary variable used to print msg
     int tmp_motor_num1;
@@ -143,7 +149,7 @@ namespace gazebo
     double max_rot_velocity_{kDefaulMaxRotVelocity};
     double moment_constant_{kDefaultMomentConstant};
     double motor_constant_{kDefaultMotorConstant};
-    double ref_motor_rot_vel_{0.0}; // 참조 모터 회전 속도
+    double ref_motor_rot_vel_{0.0}; // 참조 모터 회전 속도 //0.0 이라는건 초기에 double형식으로 0이라는 뜻인듯?
     double rolling_moment_coefficient_{kDefaultRollingMomentCoefficient};
     double rotor_drag_coefficient_{kDefaultRotorDragCoefficient};
     double rotor_velocity_slowdown_sim_{kDefaultRotorVelocitySlowdownSim};
@@ -192,6 +198,7 @@ namespace gazebo
     void WindVelocityCallback(const boost::shared_ptr<const physics_msgs::msgs::Wind> &msg); // 풍속 변경에 대응하는 콜백 함수
     // WindVelocityCallback 은  boost::shared_ptr<Publisher> 이러한 타입인 publisher가 쏘는 physics_msgs::msgs::Wind 타입의 msg를 받는다?
     // 그래서 gazebo_wind_plugin.h 파일의 physics_msgs::msgs::Wind wind_msg; 을 받는다?
+
     std::unique_ptr<FirstOrderFilter<double>> rotor_velocity_filter_;
     /*
       // Protobuf test

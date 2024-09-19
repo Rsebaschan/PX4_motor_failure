@@ -129,11 +129,11 @@ namespace gazebo
     }
     // Create our ROS node. This acts in a similar manner to the Gazebo node
     this->rosNode = new ros::NodeHandle("ros_wind_sub");
-    ros::SubscribeOptions so = ros::SubscribeOptions::create<geometry_msgs::Vector3>("/my_change_wind",
+    ros::SubscribeOptions so = ros::SubscribeOptions::create<geometry_msgs::Vector3>("/my_custom_wind",
                                                                                      10, boost::bind(&GazeboWindPlugin::OnWindMsg, this, _1),
                                                                                      ros::VoidPtr(), &this->rosQueue);
     this->rosSub = this->rosNode->subscribe(so);
-    // this->my_wind_sub = this->rosNode->subscribe<geometry_msgs::Vector3>("/my_change_wind", 10, &GazeboWindPlugin::OnWindMsg, this);
+    // this->my_wind_sub = this->rosNode->subscribe<geometry_msgs::Vector3>("/my_custom_wind", 10, &GazeboWindPlugin::OnWindMsg, this);
     // 이런식으로 rosnode는 this를 붙여야한다.
     this->rosQueueThread = std::thread(std::bind(&GazeboWindPlugin::QueueThread, this));
 
@@ -208,7 +208,7 @@ namespace gazebo
     wind_v->set_x(wind.X() + wind_gust.X());
     wind_v->set_y(wind.Y() + wind_gust.Y());
     wind_v->set_z(wind.Z() + wind_gust.Z());
-    // std::cout << "[wind_v befor before change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
+    // std::cout << "[wind_v befor change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
 
     // std::cout << "[my_wind_v in Load] :  (" << my_wind_v->x() << ", " << my_wind_v->y() << ", " << my_wind_v->z() << ")" << std::endl;
 
@@ -217,7 +217,7 @@ namespace gazebo
       wind_v->set_x(my_wind_v->x());
       wind_v->set_y(my_wind_v->y());
       wind_v->set_z(my_wind_v->z());
-      std::cout << "[wind_v after after change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
+      std::cout << "[wind_v after  change] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;
     }
 
     // std::cout << "[wind_v in Onupdate] :  (" << wind_v->x() << ", " << wind_v->y() << ", " << wind_v->z() << ")" << std::endl;

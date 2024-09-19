@@ -35,9 +35,10 @@ namespace gazebo
   void GazeboMotorModel::Publish()
   {
     turning_velocity_msg_.set_data(joint_->GetVelocity(0));
-    // std::cout << "motor_velocity_pub_ to: " << turning_velocity_msg_.data() << "   " << a++ << std::endl;
     // GetVelocity(0) 메서드는 해당 조인트의 첫 번째 축(0번 인덱스)에 대한 현재 속도를 반환합니다.
     // 반환된 현재 속도를 turning_velocity_msg_ 객체에 넣는다.
+    std::cout << "turning_velocity_msg_ [" << turning_velocity_msg_.data() << "] " << "  a = " << a++ << std::endl;
+
     //  FIXME: Commented out to prevent warnings about queue limit reached.
     motor_velocity_pub_->Publish(turning_velocity_msg_); // 이부분 수정했다
     // 신기하다
@@ -143,6 +144,7 @@ namespace gazebo
     // sdf 파일에서 commandSubTopic의 줄에서 /gazebo/command/motor_speed 내용을  command_sub_topic_에 저장한다.
     // 한줄 요약 command_sub_topic_ 에 /gazebo/command/motor_speed 라는 내용 담김
     getSdfParam<std::string>(_sdf, "commandSubTopic", command_sub_topic_, command_sub_topic_);
+
     // 한줄 요약 motor_speed_pub_topic_ 에 /motor_speed/0 라는 내용 담김
     getSdfParam<std::string>(_sdf, "motorSpeedPubTopic", motor_speed_pub_topic_,
                              motor_speed_pub_topic_);
@@ -175,6 +177,14 @@ namespace gazebo
     // simulation iteration.
     updateConnection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboMotorModel::OnUpdate, this, _1));
 
+    /*
+    gazebo_mavlink_interface.cpp 에서 motor_velocity_reference_pub_ 노드가 turning_velocities_msg 메세지를 보내준다.
+    turning_velocities_msg 값을 command_sub_ 노드가 sub한다.
+    turning_velocities_msg 에는 제어 신호(actuator_controls)가 스케일링 된 값이 있다.
+    스케일링 안된값은 = actuator_controls , 스케일링 된 값은 = input_reference_
+    VelocityCallback 을 통해 turning_velocities_msg 와 max_rot_velocity_ 를 비교하여 모터 saturation을 건다.
+    그 후 saturation에 걸맞는 값을 ref_motor_rot_vel_ 에 담는다.
+    */
     command_sub_ = node_handle_->Subscribe<mav_msgs::msgs::CommandMotorSpeed>("~/" + model_->GetName() + command_sub_topic_, &GazeboMotorModel::VelocityCallback, this);
     std::cout << "[gazebo_motor_model]: Subscribe to gz topic: " << motor_failure_sub_topic_ << std::endl;  // 내가 수정 ---------------------
     std::cout << "[gazebo_motor_model]: Subscribe to gz topic: " << motor_failure_sub_topic_1 << std::endl; // 내가 수정 ---------------------
@@ -193,12 +203,12 @@ namespace gazebo
     motor_failure_sub_3 = node_handle_->Subscribe<msgs::Int>("/gazebo/motor_failure_num3", &GazeboMotorModel::MotorFailureCallback3, this); // 이부분은 수정했다 //내가 수정한거---------
 
     // FIXME: Commented out to prevent warnings about queue limit reached.
-    motor_velocity_pub_ = node_handle_->Advertise<std_msgs::msgs::Float>("~/" + model_->GetName() + motor_speed_pub_topic_, 10); // 이부분 수정했다
-    // std::cout << "motor_velocity_pub_ Gazebo topic subscribed: " << "~/" + model_->GetName() + motor_speed_pub_topic_ << std::endl;
-
+    motor_velocity_pub_ = node_handle_->Advertise<std_msgs::msgs::Float>("~/" + model_->GetName() + motor_speed_pub_topic_, 1);   // 이부분 수정했다
     wind_sub_ = node_handle_->Subscribe<physics_msgs::msgs::Wind>("~/world_wind", &GazeboMotorModel::WindVelocityCallback, this); // 여기에 gazebo_wind_plugin에서 오는 /world_wind가 들어온다.
 
     // Create the first order filter.
+    // common.h 헤더 파일에 FirstOrderFilter 가 정의 되어 있다.
+    // 신호를 매끄럽게 처리할려고 하는듯 한데, 나한테 필요없을듯 함.
     rotor_velocity_filter_.reset(new FirstOrderFilter<double>(time_constant_up_, time_constant_down_, ref_motor_rot_vel_));
   }
 
@@ -229,14 +239,25 @@ namespace gazebo
 
   void GazeboMotorModel::VelocityCallback(CommandMotorSpeedPtr &rot_velocities)
   {
+    // rot_velocities 이 값은 turning_velocities_msg 이다. 왜 이름을 저렇게 헷갈리게 지엇을까?
+    // rot_velocities 의 사이즈는 0~15 이며 사이즈 16이다.
+    // rot_velocities 포인터여서 ->를 쓰고 rot_velocities->motor_speed(index) 를 통해 rot_velocities의 각 인덱스에 스케일링 된 제어신호를 얻는다.
+
     if (rot_velocities->motor_speed_size() < motor_number_)
     {
       std::cout << "You tried to access index " << motor_number_
                 << " of the MotorSpeed message array which is of size " << rot_velocities->motor_speed_size() << "." << std::endl;
     }
     else
+    {
+      // max_rot_velocity_ 값은 내가 sdf에 설정한 최대 회전속도이다.
+      // 제어 신호랑 max_rot_velocity_ 값을 비교해서 saturation에 맞는 값을 이용하는거다.
       ref_motor_rot_vel_ = std::min(static_cast<double>(rot_velocities->motor_speed(motor_number_)), static_cast<double>(max_rot_velocity_));
+      // std::cout << "hhhhhhhhhh " << std::endl;
+    }
+    // motor_speed함수는 MotorSpeed.pb.h 에서 사용되는 include되서 사용되는듯
   }
+
   // const boost::shared_ptr<const msgs::Int> &fail_msg: 이 파라미터는 모터 고장 번호를 담고 있는 메시지의 포인터를 받습니다.
   // boost::shared_ptr는 C++의 스마트 포인터 중 하나로, 메모리 관리를 자동으로 처리해주며 여기서는 msgs::Int 타입의 객체를 가리킵니다.
   // fail_msg->data()를 호출하여 메시지에서 모터 고장 번호를 추출하고, 이를 motor_Failure_Number_ 멤버 변수에 저장합니다.
@@ -401,11 +422,17 @@ namespace gazebo
     // - \omega * \mu_1 * V_A^{\perp}
     rolling_moment = -std::abs(real_motor_velocity) * turning_direction_ * rolling_moment_coefficient_ * velocity_perpendicular_to_rotor_axis;
     parent_links.at(0)->AddTorque(rolling_moment);
+
+    // 밑에 부분도 뭔가 필터링인듯. 그냥 부드럽게 받을려고?
     // Apply the filter on the motor's velocity.
     double ref_motor_rot_vel;
     ref_motor_rot_vel = rotor_velocity_filter_->updateFilter(ref_motor_rot_vel_, sampling_time_);
 
+    // std::cout << "ref_motor_rot_vel [" << ref_motor_rot_vel << "] " << "  a = " << a << std::endl;
+    // std::cout << "ref_motor_rot_vel_ [" << ref_motor_rot_vel_ << "] " << "  a = " << a++ << std::endl;
+
 #if 0 // FIXME: disable PID for now, it does not play nice with the PX4 CI system.
+  // 여기는 안들어온다
   if (use_pid_)
   {
     double err = joint_->GetVelocity(0) - turning_direction_ * ref_motor_rot_vel / rotor_velocity_slowdown_sim_;
@@ -427,19 +454,22 @@ namespace gazebo
 #endif
   }
 #else
+    // 여기로 들어와서 모터에 속도를 주입한다ㅏ.
     joint_->SetVelocity(0, turning_direction_ * ref_motor_rot_vel / rotor_velocity_slowdown_sim_);
+    // turning_direction_ int 이고, ref_motor_rot_vel 는 double 이고, rotor_velocity_slowdown_sim_ 는 double이다.
     // 결국 이게 최종으로 들어가는듯 하다.
     // ref_motor_rot_vel / rotor_velocity_slowdown_sim_ 하는 이유는 확실하지 않지만, 시뮬레이션을 고려해서 rotor_velocity_slowdown_sim_ 을 곱했지만
     // 모터에 주입할때는 시뮬레이션 고려한 상수인 rotor_velocity_slowdown_sim_ 를 나누고 주입해야한다.
 #endif /* if 0 */
   }
+
   // 여기서부터는 있는게 없다
   void GazeboMotorModel::UpdateMotorFail()
   {
     if (motor_number_ == motor_Failure_Number_ - 1)
     {
       // motor_constant_ = 0.0;
-      joint_->SetVelocity(0, 0);
+      joint_->SetVelocity(0, 10);
       if (screen_msg_flag)
       {
         std::cout << "Motor number [" << motor_Failure_Number_ << "] failed!  [Motor thrust = 0]" << std::endl;
